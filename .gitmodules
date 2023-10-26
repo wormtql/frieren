@@ -1,0 +1,12 @@
+[submodule "3rd/glfw"]
+	path = 3rd/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "3rd/webgpu-distribution"]
+	path = 3rd/webgpu-distribution
+	url = https://github.com/eliemichel/WebGPU-distribution.git
+[submodule "3rd/glfw3webgpu"]
+	path = 3rd/glfw3webgpu
+	url = https://github.com/eliemichel/glfw3webgpu.git
+[submodule "3rd/nlohmann_json"]
+	path = 3rd/nlohmann_json
+	url = https://github.com/nlohmann/json.git
