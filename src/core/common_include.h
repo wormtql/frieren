@@ -16,6 +16,7 @@
 #include <optional>
 #include <sstream>
 #include <cassert>
+#include <algorithm>
 
 #include <nlohmann/json.hpp>
 

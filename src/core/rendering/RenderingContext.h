@@ -7,7 +7,10 @@ namespace frieren_core {
     class RenderingContext {
     private:
         WGPUDevice device;
-
+        WGPUQueue queue;
+    
+    public:
+        
     };
 }
 

@@ -23,6 +23,8 @@ namespace frieren_core {
 
         BindGroupBuilder& add_texture(int binding, WGPUTextureView texture_view);
 
+        BindGroupBuilder& add_sampler(int binding, WGPUSampler sampler);
+
         WGPUBindGroup build(WGPUDevice device, WGPUBindGroupLayout layout) const;
     };
 }

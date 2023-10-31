@@ -13,6 +13,8 @@ namespace frieren_core {
         e.buffer = buffer;
         e.offset = offset;
         e.size = size;
+        e.sampler = nullptr;
+        e.textureView = nullptr;
 
         entries.push_back(e);
 
@@ -27,6 +29,8 @@ namespace frieren_core {
         e.buffer = buffer;
         e.size = wgpuBufferGetSize(buffer);
         e.offset = 0;
+        e.sampler = nullptr;
+        e.textureView = nullptr;
 
         entries.push_back(e);
 
@@ -39,6 +43,22 @@ namespace frieren_core {
         e.nextInChain = nullptr;
         e.binding = binding;
         e.textureView = texture_view;
+        e.buffer = nullptr;
+        e.sampler = nullptr;
+
+        entries.push_back(e);
+
+        return *this;
+    }
+
+    BindGroupBuilder& BindGroupBuilder::add_sampler(int binding, WGPUSampler sampler) {
+        WGPUBindGroupEntry e;
+
+        e.nextInChain = nullptr;
+        e.binding = binding;
+        e.buffer = nullptr;
+        e.textureView = nullptr;
+        e.sampler = sampler;
 
         entries.push_back(e);
 

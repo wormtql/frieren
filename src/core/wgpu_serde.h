@@ -1,3 +1,6 @@
+#ifndef FRIEREN_CORE_WGPU_SERDE_H
+#define FRIEREN_CORE_WGPU_SERDE_H
+
 #include <nlohmann/json.hpp>
 #include <webgpu/webgpu.hpp>
 
@@ -199,3 +202,39 @@ struct WGPUColorTargetStateOwned {
 void from_json(const json& j, WGPUColorTargetStateOwned& state);
 
 void from_json(const json& j, WGPUMultisampleState& state);
+
+NLOHMANN_JSON_SERIALIZE_ENUM(WGPUAddressMode, {
+    {WGPUAddressMode_ClampToEdge, "ClampToEdge"},
+    {WGPUAddressMode_Repeat, "Repeat"},
+    {WGPUAddressMode_MirrorRepeat, "MirrorRepeat"}
+})
+
+NLOHMANN_JSON_SERIALIZE_ENUM(WGPUFilterMode, {
+    {WGPUFilterMode_Linear, "Linear"},
+    {WGPUFilterMode_Nearest, "Nearest"},
+})
+
+NLOHMANN_JSON_SERIALIZE_ENUM(WGPUMipmapFilterMode, {
+    {WGPUMipmapFilterMode_Linear, "Linear"},
+    {WGPUMipmapFilterMode_Nearest, "Nearest"}
+})
+
+struct WGPUSamplerDescriptorOwned {
+    string label;
+    WGPUAddressMode addressModeU;
+    WGPUAddressMode addressModeV;
+    WGPUAddressMode addressModeW;
+    WGPUFilterMode magFilter;
+    WGPUFilterMode minFilter;
+    WGPUMipmapFilterMode mipmapFilter;
+    float lodMinClamp;
+    float lodMaxClamp;
+    WGPUCompareFunction compare;
+    uint16_t maxAnisotropy;
+};
+
+void from_json(const json& j, WGPUSamplerDescriptorOwned& desc);
+
+void from_json(const json& j, WGPUShaderStageFlags& flags);
+
+#endif

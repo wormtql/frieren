@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 23)
 # glfw
 add_subdirectory(3rd/glfw)
 
+# glm
+add_subdirectory(3rd/glm)
+
 # wgpu
 add_subdirectory(3rd/webgpu-distribution)
 add_subdirectory(3rd/glfw3webgpu)

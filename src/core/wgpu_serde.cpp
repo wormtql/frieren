@@ -298,3 +298,44 @@ void from_json(const json& j, WGPUMultisampleState& state) {
     state.mask = j["mask"];
     state.alphaToCoverageEnabled = j["alpha_to_coverage_enabled"];
 }
+
+void from_json(const json& j, WGPUSamplerDescriptorOwned& desc) {
+    desc.label = j["name"].template get<string>();
+    desc.addressModeU = j["address_mode_u"].template get<WGPUAddressMode>();
+    desc.addressModeV = j["address_mode_v"].template get<WGPUAddressMode>();
+    desc.addressModeW = j["address_mode_w"].template get<WGPUAddressMode>();
+    desc.magFilter = j["mag_filter"].template get<WGPUFilterMode>();
+    desc.minFilter = j["min_filter"].template get<WGPUFilterMode>();
+    desc.mipmapFilter = j["mipmap_filter"].template get<WGPUMipmapFilterMode>();
+    desc.lodMinClamp = j["lod_min_clamp"];
+    desc.lodMaxClamp = j["lod_max_clamp"];
+    desc.compare = j["compare"].template get<WGPUCompareFunction>();
+    desc.maxAnisotropy = j["max_anisotropy"];
+}
+
+void from_json(const json& j, WGPUShaderStageFlags flags) {
+    auto serialize_str = [] (const json& j2) {
+        string s = j2.template get<string>();
+        if (s == "None") {
+            return WGPUShaderStage_None;
+        } else if (s == "Vertex") {
+            return WGPUShaderStage_Vertex;
+        } else if (s == "Fragment") {
+            return WGPUShaderStage_Fragment;
+        } else if (s == "Compute") {
+            return WGPUShaderStage_Compute;
+        } else {
+            assert(false);
+        }
+        return WGPUShaderStage_None;
+    };
+
+    if (j.is_string()) {
+        flags = serialize_str(j);
+    } else if (j.is_array()) {
+        flags = 0;
+        for (const auto& j2: j) {
+            flags = flags | serialize_str(j2);
+        }
+    }
+}

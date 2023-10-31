@@ -2,13 +2,22 @@
 #define FRIEREN_CORE_MESH_H
 
 #include <webgpu/webgpu.hpp>
+#include "Vertex.h"
 
 namespace frieren_core {
-    struct Mesh {
-        WGPUBuffer vertex_buffer;
-        WGPUBuffer index_buffer;
+    class Mesh {
+    private:
+        WGPUBuffer vertex_buffer = nullptr;
+        WGPUBuffer index_buffer = nullptr;
 
-        static WGPUVertexBufferLayout get_vertex_buffer_layout();
+        std::vector<Vertex> vertices;
+        std::vector<uint32_t> indices;
+    public:
+        Mesh() = default;
+
+        bool is_gpu_buffer_created();
+
+        void create_gpu_buffer(WGPUDevice device);
     };
 }
 

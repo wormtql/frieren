@@ -10,3 +10,9 @@
 [submodule "3rd/nlohmann_json"]
 	path = 3rd/nlohmann_json
 	url = https://github.com/nlohmann/json.git
+[submodule "3rd/glm"]
+	path = 3rd/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "3rd/stb"]
+	path = 3rd/stb
+	url = https://github.com/nothings/stb.git
