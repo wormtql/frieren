@@ -21,6 +21,7 @@ namespace frieren_core {
         bool load_shader_descriptor(const filesystem::path& path);
     public:
         ShaderManager() = default;
+        ShaderManager(const ShaderManager& other) = delete;
 
         void init_all_shaders();
 

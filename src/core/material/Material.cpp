@@ -2,6 +2,45 @@
 #include <utilities/BindGroupBuilder.h>
 
 namespace frieren_core {
+    Material::Material(
+        WGPUDevice device,
+        WGPUQueue queue,
+        const MaterialDescriptor& desc,
+        TextureManager& texture_manager,
+        SamplerManager& sampler_manager,
+        ShaderManager& shader_manager
+    ) {
+        this->shader = shader_manager.get_shader(device, desc.shader_name).value();
+
+        set<string> shader_texture_names = shader->get_texture_names();
+        set<string> shader_sampler_names = shader->get_sampler_names();
+
+        this->shader_properties = std::move(desc.shader_properties);
+        for (const auto& t: desc.shader_textures) {
+            const string& name = t.first;
+            const string& texture_name = t.second;
+
+            if (shader_texture_names.find(name) == shader_texture_names.end()) {
+                continue;
+            }
+
+            shared_ptr<Texture> texture = texture_manager.get_texture(device, queue, texture_name).value();
+            this->shader_textures[name] = texture;
+        }
+
+        for (const auto& t: desc.shader_samplers) {
+            const string& name = t.first;
+            const string& sampler_name = t.second;
+
+            if (shader_sampler_names.find(name) == shader_sampler_names.end()) {
+                continue;
+            }
+
+            shared_ptr<Sampler> sampler = sampler_manager.get_sampler(device, sampler_name).value();
+            this->shader_samplers[name] = sampler;
+        }
+    }
+
     Material::Material(shared_ptr<Shader> shader) {
         this->shader = shader;
     }
@@ -65,5 +104,24 @@ namespace frieren_core {
             memcpy(cpu_buffer + offset, &prop.value, size);
         }
         wgpuQueueWriteBuffer(queue, buffer, 0, cpu_buffer, shader_property_layout.get_total_size());
+    }
+}
+
+// serde
+namespace frieren_core {
+    void from_json(const json& j, MaterialDescriptor& desc) {
+        desc.name = j["name"];
+        desc.shader_name = j["shader_name"];
+        for (const auto& el: j["properties"].items()) {
+            string key = el.key();
+            ShaderProperty p = el.value().template get<ShaderProperty>();
+            desc.shader_properties[key] = p;
+        }
+        for (const auto& el: j["textures"].items()) {
+            desc.shader_textures[el.key()] = el.value().template get<string>();
+        }
+        for (const auto& el: j["samplers"].items()) {
+            desc.shader_samplers[el.key()] = el.value().template get<string>();
+        }
     }
 }

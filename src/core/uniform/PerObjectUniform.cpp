@@ -1,7 +1,7 @@
-#include "PerFrameUniform.h"
+#include "PerObjectUniform.h"
 
 namespace frieren_core {
-    PerFrameUniform::~PerFrameUniform() {
+    PerObjectUniform::~PerObjectUniform() {
         if (buffer != nullptr) {
             wgpuBufferDestroy(buffer);
             wgpuBufferRelease(buffer);
@@ -9,20 +9,18 @@ namespace frieren_core {
         }
     }
 
-    void PerFrameUniform::create_wgpu_buffer(WGPUDevice device) {
+    void PerObjectUniform::create_wgpu_buffer(WGPUDevice device) {
         WGPUBufferDescriptor desc;
         desc.nextInChain = nullptr;
-        desc.label = "per_frame_uniform";
+        desc.label = "per_object_uniform";
         desc.usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;
-        desc.size = sizeof(PerFrameUniformData);
+        desc.size = MAX_PER_OBJECT_UNIFORM_COUNT * sizeof(PerObjectUniformData);
         desc.mappedAtCreation = false;
 
         buffer = wgpuDeviceCreateBuffer(device, &desc);
     }
 
-    void PerFrameUniform::update_uniform_buffer(WGPUQueue queue) {
-        auto size = sizeof(PerFrameUniformData);
-
-        wgpuQueueWriteBuffer(queue, buffer, 0, &data, size);
+    void PerObjectUniform::update_uniform_buffer(WGPUQueue queue) {
+        wgpuQueueWriteBuffer(queue, buffer, 0, data.data(), data.size() * sizeof(PerObjectUniformData));
     }
 }

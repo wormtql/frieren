@@ -49,6 +49,7 @@ namespace frieren_core {
             }
 
             this->cpu_data = img;
+            this->pixel_size = channels;
 
             wgpu_texture_desc.size = WGPUExtent3D {
                 .width = static_cast<unsigned int>(width),
@@ -58,7 +59,8 @@ namespace frieren_core {
         } else {
             assert(false);
         }
-        
+
+        this->texture_size = wgpu_texture_desc.size;
         this->texture = wgpuDeviceCreateTexture(device, &wgpu_texture_desc);
 
         WGPUTextureViewDescriptor texture_view_desc;
@@ -81,8 +83,8 @@ namespace frieren_core {
             this->texture_view = nullptr;
         }
         if (this->texture) {
-            wgpuTextureRelease(this->texture);
             wgpuTextureDestroy(this->texture);
+            wgpuTextureRelease(this->texture);
             this->texture = nullptr;
         }
 
@@ -94,5 +96,35 @@ namespace frieren_core {
 
     WGPUTextureView Texture::get_wgpu_texture_view() const {
         return texture_view;
+    }
+
+    void Texture::write_texture(WGPUQueue queue) const {
+        WGPUImageCopyTexture dest;
+        dest.nextInChain = nullptr;
+        dest.texture = this->texture;
+        dest.mipLevel = 0;
+        dest.origin = WGPUOrigin3D { 0, 0, 0 };
+        dest.aspect = WGPUTextureAspect_All;
+
+        WGPUTextureDataLayout source;
+        source.nextInChain = nullptr;
+        source.offset = 0;
+        source.bytesPerRow = pixel_size * texture_size.width;
+        source.rowsPerImage = texture_size.height;
+
+        int image_size = texture_size.height * texture_size.width * texture_size.depthOrArrayLayers * pixel_size;
+        wgpuQueueWriteTexture(queue, &dest, this->cpu_data, image_size, &source, &texture_size);
+    }
+}
+
+// serde
+namespace frieren_core {
+    void from_json(const json& j, TextureDescriptor& desc) {
+        desc.name = j["name"];
+        desc.texture_data_path = j["texture_data_path"];
+        desc.dimension = j["dimension"].template get<WGPUTextureDimension>();
+        desc.texture_view_dimension = j["texture_view_dimension"].template get<WGPUTextureViewDimension>();
+        desc.format = j["format"].template get<WGPUTextureFormat>();
+        desc.mip_level_count = j["mip_level_count"];
     }
 }

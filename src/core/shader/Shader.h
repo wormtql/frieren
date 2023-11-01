@@ -82,6 +82,12 @@ namespace frieren_core {
         WGPUBindGroupLayout get_wgpu_bind_group_layout() const;
 
         const ShaderPropertyLayout& get_shader_property_layout_ref() const;
+
+        set<string> get_texture_names() const;
+
+        set<string> get_sampler_names() const;
+
+        set<string> get_property_names() const;
     };
 }
 

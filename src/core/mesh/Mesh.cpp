@@ -9,13 +9,13 @@ namespace frieren_core {
 
     void Mesh::create_gpu_buffer(WGPUDevice device) {
         if (vertex_buffer) {
-            wgpuBufferRelease(vertex_buffer);
             wgpuBufferDestroy(vertex_buffer);
+            wgpuBufferRelease(vertex_buffer);
             vertex_buffer = nullptr;
         }
         if (index_buffer) {
-            wgpuBufferRelease(index_buffer);
             wgpuBufferDestroy(index_buffer);
+            wgpuBufferRelease(index_buffer);
             index_buffer = nullptr;
         }
 

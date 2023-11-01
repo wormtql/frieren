@@ -74,8 +74,8 @@ namespace frieren_core {
 
     Shader::~Shader() {
         if (shader_property_buffer != nullptr) {
-            wgpuBufferRelease(shader_property_buffer);
             wgpuBufferDestroy(shader_property_buffer);
+            wgpuBufferRelease(shader_property_buffer);
             shader_property_buffer = nullptr;
         }
         if (bind_group_layout != nullptr) {
@@ -199,5 +199,30 @@ namespace frieren_core {
 
     const ShaderPropertyLayout& Shader::get_shader_property_layout_ref() const {
         return shader_property_layout;
+    }
+
+    set<string> Shader::get_texture_names() const {
+        set<string> ret;
+        for (const auto& t: this->bind_group_layout_entries) {
+            if (t.texture.sampleType != WGPUTextureSampleType_Undefined) {
+                ret.insert(t.name);
+            }
+        }
+        return std::move(ret);
+    }
+
+    set<string> Shader::get_sampler_names() const {
+        set<string> ret;
+        for (const auto& t: this->bind_group_layout_entries) {
+            if (t.sampler.type != WGPUSamplerBindingType_Undefined) {
+                ret.insert(t.name);
+            }
+        }
+        return std::move(ret);
+    }
+
+    set<string> Shader::get_property_names() const {
+        const auto& names = this->shader_property_layout.get_names();
+        return {names.begin(), names.end()};
     }
 }
