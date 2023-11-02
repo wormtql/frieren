@@ -1,6 +1,6 @@
 add_library(frieren_core)
 target_link_libraries(frieren_core webgpu webgpu_impl nlohmann_json::nlohmann_json glm stb_image)
-target_link_libraries(frieren_core glfw glfw3webgpu)
+target_link_libraries(frieren_core glfw glfw3webgpu nanoid)
 
 file(GLOB frieren_core_headers "**/*.h" "*.h")
 file(GLOB frieren_core_sources "**/*.cpp" "*.cpp")

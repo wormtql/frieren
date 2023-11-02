@@ -1,0 +1,2 @@
+add_executable(frieren_test test.cpp)
+target_link_libraries(frieren_test PRIVATE Catch2::Catch2WithMain)

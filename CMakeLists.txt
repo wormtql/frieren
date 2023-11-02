@@ -17,8 +17,15 @@ include_directories(3rd/webgpu-distribution/include)
 # nlohmann json
 add_subdirectory(3rd/nlohmann_json)
 
+# nanoid
+add_subdirectory(3rd/nanoid_cpp)
+
+# catch2
+add_subdirectory(3rd/catch2)
+
 add_executable(frieren main.cpp webgpu_cpp_impl.cpp)
 target_link_libraries(frieren glfw webgpu glfw3webgpu)
 target_copy_webgpu_binaries(frieren)
 
 add_subdirectory(src)
+add_subdirectory(test)

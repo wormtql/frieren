@@ -25,7 +25,7 @@ namespace frieren_core {
         shared_ptr<SamplerManager> sampler_manager;
         shared_ptr<TextureManager> texture_manager;
 
-        WGPUAdapter requestAdapter(const WGPURequestAdapterOptions& options);
+        WGPUAdapter request_adapter(const WGPURequestAdapterOptions& options);
     
         void inspect_adapter();
 

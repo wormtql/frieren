@@ -5,6 +5,7 @@
 #include <webgpu/webgpu.hpp>
 
 using json = nlohmann::json;
+using std::string;
 
 void from_json(const json& j, WGPUBlendOperation& blend_operation);
 

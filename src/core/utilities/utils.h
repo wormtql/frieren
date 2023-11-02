@@ -19,6 +19,19 @@ namespace frieren_core {
 
     namespace utils {
         optional<string> read_file_to_string(const std::filesystem::path& path);
+
+        template<typename T>
+        string get_type_name() {
+            string name = typeid(T).name();
+            auto pos = name.find_last_of("::");
+            if (pos == string::npos) {
+                return name;
+            } else {
+                return name.substr(pos + 2);
+            }
+        }
+
+        string get_json_object_any_key(const json& j);
     }
 }
 
