@@ -1,6 +1,6 @@
 #include "utils.h"
 
-namespace fieren_core::utils {
+namespace frieren_core::utils {
     optional<string> read_file_to_string(const std::filesystem::path& path) {
         std::ifstream t(path);
 

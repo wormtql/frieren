@@ -9,7 +9,7 @@ using namespace std;
 
 namespace frieren_core {
     class Scene {
-    private:
+    public:
         string name;
         string id;
     public:

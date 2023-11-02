@@ -27,7 +27,7 @@ namespace frieren_core {
             if (pos == string::npos) {
                 return name;
             } else {
-                return name.substr(pos + 2);
+                return name.substr(pos + 1);
             }
         }
 

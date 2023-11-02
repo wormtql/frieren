@@ -4,6 +4,7 @@
 #include <common_include.h>
 #include <components/Component.h>
 #include <components/Transform.h>
+#include <utilities/utils.h>
 
 using namespace std;
 
@@ -29,14 +30,7 @@ namespace frieren_core::component {
     void ComponentRegistry::add_deserializer() {
         static_assert(std::is_base_of<Component, T>::value);
 
-        string full_name = typeid(T).name();
-        auto it = full_name.find_last_of("::");
-        string classname;
-        if (it == string::npos) {
-            classname = full_name;
-        } else {
-            classname = full_name.substr(it + 2);
-        }
+        string classname = utils::get_type_name<T>();
 
         auto f = [] (const json& j) {
             shared_ptr<T> ret = make_shared<T>();

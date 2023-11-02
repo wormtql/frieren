@@ -38,5 +38,9 @@ namespace frieren_core {
         for (auto& item: components) {
             item.second->link_referenced_components(components_ref);
         }
+
+        for (const auto& go: goes) {
+            scene.game_object_manager.add_game_object(go.second);
+        }
     }
 }

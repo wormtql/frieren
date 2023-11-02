@@ -2,11 +2,14 @@
 #define FRIEREN_CORE_GAME_OBJECT_H
 
 #include <components/Component.h>
+#include <components/Transform.h>
 #include <common_include.h>
 #include <utilities/LazyRef.h>
+#include <utilities/utils.h>
 
 using namespace std;
 using frieren_core::component::Component;
+using frieren_core::component::Transform;
 using frieren_core::utils::LazyRef;
 
 namespace frieren_core {
@@ -43,16 +46,18 @@ namespace frieren_core {
     template<typename T>
     void GameObject::add_component(shared_ptr<T> component) {
         static_assert(std::is_base_of<Component, T>::value, "can only add to game object with component");
-        const auto& ty = typeid(T);
-        components[ty.name()] = component;
+        
+        string name = utils::get_type_name<T>();
+        components[name] = component;
     }
 
     template<typename T>
     std::optional<shared_ptr<T>> GameObject::get_component() {
         static_assert(std::is_base_of<Component, T>::value, "can only get component");
-        const auto& ty = typeid(T);
-        if (components.find(ty.name()) != components.end()) {
-            auto temp = components[ty.name()];
+
+        string name = utils::get_type_name<T>();
+        if (components.find(name) != components.end()) {
+            auto temp = components[name];
             return dynamic_pointer_cast<T, Component>(temp);
         }
         return {};
@@ -61,10 +66,16 @@ namespace frieren_core {
     template<typename T>
     std::optional<shared_ptr<T>> GameObject::remove_component() {
         static_assert(std::is_base_of<Component, T>::value, "can only remove component");
-        const auto& ty = typeid(T);
-        auto it = components.find(ty.name());
+
+        // we cannot remove transform component
+        if (std::is_same<T, Transform>::value) {
+            return {};
+        }
+
+        string name = utils::get_type_name<T>();
+        auto it = components.find(name);
         if (it != components.end()) {
-            shared_ptr<T> comp = components[ty.name()];
+            shared_ptr<T> comp = components[name];
             components.erase(it);
             return comp;
         }

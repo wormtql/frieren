@@ -16,9 +16,9 @@
 [submodule "3rd/stb"]
 	path = 3rd/stb
 	url = https://github.com/nothings/stb.git
-[submodule "3rd/nanoid_cpp"]
-	path = 3rd/nanoid_cpp
-	url = https://github.com/mcmikecreations/nanoid_cpp.git
 [submodule "3rd/catch2"]
 	path = 3rd/catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "3rd/nanoid_cpp"]
+	path = 3rd/nanoid_cpp
+	url = https://github.com/wormtql/nanoid_cpp.git

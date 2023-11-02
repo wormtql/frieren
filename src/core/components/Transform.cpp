@@ -70,21 +70,26 @@ namespace frieren_core::component {
         }
 
         // link parent
-        shared_ptr<Component> p1 = components.at(parent.referenced_id);
-        shared_ptr<Transform> p2 = dynamic_pointer_cast<Transform, Component>(p1);
-        parent.object = p2;
+        if (parent.referenced_id != "") {
+            shared_ptr<Component> p1 = components.at(parent.referenced_id);
+            shared_ptr<Transform> p2 = dynamic_pointer_cast<Transform, Component>(p1);
+            parent.object = p2;
+        }
     }
 }
 
 // serde
 namespace frieren_core::component {
     void from_json(const json& j, Transform& transform) {
+        transform.id = j["id"];
         transform.position = j["position"].template get<glm::vec3>();
         transform.rotation = j["rotation"].template get<glm::vec3>();
         transform.scale = j["scale"];
-        for (const auto& c: j["children"]) {
-            string id = c.template get<string>();
-            transform.children.emplace_back(id);
+        if (j.contains("children")) {
+            for (const auto& c: j["children"]) {
+                string id = c.template get<string>();
+                transform.children.emplace_back(id);
+            }
         }
         if (j.contains("parent")) {
             string id = j["parent"].template get<string>();

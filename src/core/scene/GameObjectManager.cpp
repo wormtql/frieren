@@ -39,4 +39,8 @@ namespace frieren_core {
         }
         return game_objects[name];
     }
+
+    void GameObjectManager::add_game_object(shared_ptr<GameObject> go) {
+        game_objects[go->get_id()] = go;
+    }
 }

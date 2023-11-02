@@ -1,6 +1,8 @@
 #include "ComponentRegistry.h"
 
 namespace frieren_core::component {
+    ComponentRegistry ComponentRegistry::instance{};
+
     ComponentRegistry::ComponentRegistry() {
         init_deserializer();
     }

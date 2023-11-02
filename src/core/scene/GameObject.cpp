@@ -35,7 +35,7 @@ namespace frieren_core {
         if (j.contains("components")) {
             for (const auto& item: j["components"]) {
                 optional<shared_ptr<Component>> comp = ComponentRegistry::instance.deserialize_component(item);
-                string component_name = utils::get_json_object_any_key(item);
+                string component_name = ::frieren_core::utils::get_json_object_any_key(item);
                 if (comp.has_value()) {
                     go.components[component_name] = comp.value();
                 }

@@ -10,7 +10,7 @@ using namespace std;
 
 namespace frieren_core::component {
     class Transform: public Component {
-    private:
+    public:
         glm::vec3 position;
         glm::vec3 rotation;
         float scale;
