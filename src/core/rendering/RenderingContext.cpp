@@ -180,6 +180,11 @@ namespace frieren_core {
         this->shader_manager = make_shared<ShaderManager>();
     }
 
+    void RenderingContext::setup_mesh_manager() {
+        this->mesh_manager = make_shared<MeshManager>();
+        mesh_manager->init_builtin_mesh(device, queue);
+    }
+
     RenderingContext::RenderingContext() {
         WGPUInstanceDescriptor instance_desc;
         instance_desc.nextInChain = nullptr;
@@ -259,5 +264,6 @@ namespace frieren_core {
         this->setup_shader_manager();
         this->setup_texture_manager();
         this->setup_material_manager();
+        this->setup_mesh_manager();
     }
 }

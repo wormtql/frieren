@@ -1,5 +1,6 @@
 #include "Material.h"
 #include <utilities/BindGroupBuilder.h>
+#include <nanoid/nanoid.h>
 
 namespace frieren_core {
     Material::Material(
@@ -11,6 +12,12 @@ namespace frieren_core {
         ShaderManager& shader_manager
     ) {
         this->shader = shader_manager.get_shader(device, desc.shader_name).value();
+        this->name = desc.name;
+        if (desc.id.has_value()) {
+            this->id = desc.id.value();
+        } else {
+            this->id = nanoid::generate();
+        }
 
         set<string> shader_texture_names = shader->get_texture_names();
         set<string> shader_sampler_names = shader->get_sampler_names();
@@ -41,8 +48,10 @@ namespace frieren_core {
         }
     }
 
-    Material::Material(shared_ptr<Shader> shader) {
+    Material::Material(shared_ptr<Shader> shader, const string& name) {
         this->shader = shader;
+        this->name = name;
+        this->id = nanoid::generate();
     }
 
     Material::~Material() {
@@ -111,6 +120,7 @@ namespace frieren_core {
 namespace frieren_core {
     void from_json(const json& j, MaterialDescriptor& desc) {
         desc.name = j["name"];
+        desc.id = j["id"];
         desc.shader_name = j["shader_name"];
         for (const auto& el: j["properties"].items()) {
             string key = el.key();

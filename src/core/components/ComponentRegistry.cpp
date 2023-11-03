@@ -1,4 +1,5 @@
 #include "ComponentRegistry.h"
+#include "components/all_components.h"
 
 namespace frieren_core::component {
     ComponentRegistry ComponentRegistry::instance{};
@@ -9,6 +10,7 @@ namespace frieren_core::component {
 
     void ComponentRegistry::init_deserializer() {
         add_deserializer<Transform>();
+        add_deserializer<MeshRenderer>();
     }
 
     optional<shared_ptr<Component>> ComponentRegistry::deserialize_component(const json &j) {

@@ -15,6 +15,7 @@ using namespace std;
 namespace frieren_core {
     struct MaterialDescriptor {
         string name;
+        optional<string> id;
         string shader_name;
         map<string, ShaderProperty> shader_properties;
         map<string, string> shader_textures;
@@ -29,10 +30,12 @@ namespace frieren_core {
         map<string, ShaderProperty> shader_properties;
         map<string, shared_ptr<Texture>> shader_textures;
         map<string, shared_ptr<Sampler>> shader_samplers;
+        string id;
+        string name;
 
         WGPUBindGroup bind_group = nullptr;
     public:
-        explicit Material(shared_ptr<Shader> shader);
+        explicit Material(shared_ptr<Shader> shader, const string& name);
         Material(
             WGPUDevice device,
             WGPUQueue queue,

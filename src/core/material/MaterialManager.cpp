@@ -21,7 +21,7 @@ namespace frieren_core {
             json j = json::parse(material_desc_json);
 
             MaterialDescriptor desc = j.template get<MaterialDescriptor>();
-            loaded_descriptors[desc.name] = desc;
+            loaded_descriptors[desc.id.value()] = desc;
         }
     }
 
@@ -40,16 +40,16 @@ namespace frieren_core {
         }
     }
 
-    optional<shared_ptr<Material>> MaterialManager::get_material(WGPUDevice device, WGPUQueue queue, const string& name) {
-        if (loaded_materials.find(name) != loaded_materials.end()) {
-            return loaded_materials[name];
+    optional<shared_ptr<Material>> MaterialManager::get_material(WGPUDevice device, WGPUQueue queue, const string& id) {
+        if (loaded_materials.find(id) != loaded_materials.end()) {
+            return loaded_materials[id];
         }
 
-        if (loaded_descriptors.find(name) == loaded_descriptors.end()) {
+        if (loaded_descriptors.find(id) == loaded_descriptors.end()) {
             return {};
         }
 
-        const auto& desc = loaded_descriptors[name];
+        const auto& desc = loaded_descriptors[id];
         shared_ptr<Material> mat = make_shared<Material>(
             device,
             queue,
@@ -59,7 +59,7 @@ namespace frieren_core {
             *shader_manager.get()
         );
 
-        loaded_materials[name] = mat;
+        loaded_materials[id] = mat;
         return mat;
     }
 }

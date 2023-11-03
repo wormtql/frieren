@@ -14,7 +14,9 @@ namespace frieren_core {
     private:
         vector<filesystem::path> search_paths;
 
+        // id -> desc
         map<string, MaterialDescriptor> loaded_descriptors;
+        // id -> mat
         map<string, shared_ptr<Material>> loaded_materials;
 
         shared_ptr<ShaderManager> shader_manager;
@@ -30,7 +32,7 @@ namespace frieren_core {
 
         void load_all_descriptors();
 
-        optional<shared_ptr<Material>> get_material(WGPUDevice device, WGPUQueue queue, const string& name);
+        optional<shared_ptr<Material>> get_material(WGPUDevice device, WGPUQueue queue, const string& id);
     };
 }
 

@@ -7,6 +7,7 @@
 #include <texture/SamplerManager.h>
 #include <texture/TextureManager.h>
 #include <common_include.h>
+#include <mesh/MeshManager.h>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ namespace frieren_core {
         shared_ptr<ShaderManager> shader_manager;
         shared_ptr<SamplerManager> sampler_manager;
         shared_ptr<TextureManager> texture_manager;
+        shared_ptr<MeshManager> mesh_manager;
 
         WGPUAdapter request_adapter(const WGPURequestAdapterOptions& options);
     
@@ -40,6 +42,8 @@ namespace frieren_core {
         void setup_sampler_manager();
 
         void setup_texture_manager();
+
+        void setup_mesh_manager();
     public:
         RenderingContext();
 
