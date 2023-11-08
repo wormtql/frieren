@@ -42,4 +42,9 @@ namespace frieren_core {
         wgpuQueueWriteBuffer(queue, vertex_buffer, 0, vertices.data(), vertices.size() * sizeof(Vertex));
         wgpuQueueWriteBuffer(queue, index_buffer, 0, indices.data(), indices.size() * sizeof(uint32_t));
     }
+
+    void Mesh::set_buffer_for_render_pass(WGPURenderPassEncoder render_pass) const {
+        wgpuRenderPassEncoderSetVertexBuffer(render_pass, 0, vertex_buffer, 0, sizeof(Vertex) * vertices.size());
+        wgpuRenderPassEncoderSetIndexBuffer(render_pass, index_buffer, WGPUIndexFormat_Uint32, 0, sizeof(uint32_t) * indices.size());
+    }
 }

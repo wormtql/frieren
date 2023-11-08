@@ -21,6 +21,6 @@ namespace frieren_core {
     }
 
     void PerObjectUniform::update_uniform_buffer(WGPUQueue queue) {
-        wgpuQueueWriteBuffer(queue, buffer, 0, data.data(), data.size() * sizeof(PerObjectUniformData));
+        wgpuQueueWriteBuffer(queue, buffer, 0, &data, sizeof(PerObjectUniformData));
     }
 }

@@ -24,6 +24,10 @@ namespace frieren_core {
         const map<string, shared_ptr<GameObject>>& get_game_objects() const {
             return game_objects;
         }
+
+        map<string, shared_ptr<GameObject>>& get_game_objects_mut() {
+            return game_objects;
+        }
     };
 }
 

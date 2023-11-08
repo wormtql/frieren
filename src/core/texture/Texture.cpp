@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include <stb_image.h>
+#include <nanoid/nanoid.h>
 
 namespace frieren_core {
     Texture::Texture(WGPUTexture texture, WGPUTextureView texture_view)
@@ -18,17 +19,43 @@ namespace frieren_core {
         "pic",
     };
 
+    Texture::Texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format) {
+        this->texture_size = WGPUExtent3D {
+            .width = (unsigned int) width,
+            .height = (unsigned int) height,
+            .depthOrArrayLayers = 1
+        };
+        this->pixel_size = channel;
+        this->id = nanoid::generate();
+
+        WGPUTextureDescriptor wgpu_texture_desc;
+        wgpu_texture_desc.nextInChain = nullptr;
+        wgpu_texture_desc.label = name.c_str();
+        wgpu_texture_desc.usage = WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding;
+        wgpu_texture_desc.dimension = WGPUTextureDimension_2D;
+        wgpu_texture_desc.format = format;
+        wgpu_texture_desc.mipLevelCount = 1;
+        wgpu_texture_desc.sampleCount = 1;
+        wgpu_texture_desc.viewFormatCount = 0;
+        wgpu_texture_desc.viewFormats = nullptr;
+
+        this->texture = wgpuDeviceCreateTexture(device, &wgpu_texture_desc);
+
+        WGPUTextureViewDescriptor texture_view_desc;
+        texture_view_desc.nextInChain = nullptr;
+        texture_view_desc.label = (name + "_view").c_str();
+        texture_view_desc.format = format;
+        texture_view_desc.dimension = WGPUTextureViewDimension_2D;
+        texture_view_desc.baseMipLevel = 0;
+        texture_view_desc.mipLevelCount = 1;
+        texture_view_desc.baseArrayLayer = 0;
+        texture_view_desc.arrayLayerCount = 1;
+        texture_view_desc.aspect = WGPUTextureAspect_All;
+
+        this->texture_view = wgpuTextureCreateView(this->texture, &texture_view_desc);
+    }
+
     Texture::Texture(WGPUDevice device, const TextureDescriptor& texture_desc) {
-        auto path = std::filesystem::path{texture_desc.texture_data_path};
-        if (!filesystem::exists(path)) {
-            assert(false);
-        }
-
-        string abs_path = filesystem::absolute(path).string();
-        filesystem::path filename = path.filename();
-        string ext = filename.extension().string();
-        std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
-
         WGPUTextureDescriptor wgpu_texture_desc;
         wgpu_texture_desc.nextInChain = nullptr;
         wgpu_texture_desc.label = texture_desc.name.c_str();
@@ -40,6 +67,16 @@ namespace frieren_core {
         wgpu_texture_desc.viewFormatCount = 0;
         wgpu_texture_desc.viewFormats = nullptr;
 
+        auto path = std::filesystem::path{texture_desc.texture_data_path};
+        if (!filesystem::exists(path)) {
+            assert(false);
+        }
+
+        string abs_path = filesystem::absolute(path).string();
+        filesystem::path filename = path.filename();
+        string ext = filename.extension().string();
+        std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
+
         if (texture_ext_stbi.find(ext) != texture_ext_stbi.end()) {
             int width, height, channels;
             unsigned char* img = stbi_load(abs_path.c_str(), &width, &height, &channels, 0);
@@ -49,6 +86,7 @@ namespace frieren_core {
             }
 
             this->cpu_data = img;
+            // assume each channel takes 1 byte
             this->pixel_size = channels;
 
             wgpu_texture_desc.size = WGPUExtent3D {
@@ -62,6 +100,7 @@ namespace frieren_core {
 
         this->texture_size = wgpu_texture_desc.size;
         this->texture = wgpuDeviceCreateTexture(device, &wgpu_texture_desc);
+        this->id = texture_desc.id;
 
         WGPUTextureViewDescriptor texture_view_desc;
         texture_view_desc.nextInChain = nullptr;
@@ -121,6 +160,7 @@ namespace frieren_core {
 namespace frieren_core {
     void from_json(const json& j, TextureDescriptor& desc) {
         desc.name = j["name"];
+        desc.id = j["id"];
         desc.texture_data_path = j["texture_data_path"];
         desc.dimension = j["dimension"].template get<WGPUTextureDimension>();
         desc.texture_view_dimension = j["texture_view_dimension"].template get<WGPUTextureViewDimension>();

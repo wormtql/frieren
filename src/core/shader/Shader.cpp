@@ -128,6 +128,7 @@ namespace frieren_core {
         pipeline_layout_descriptor.nextInChain = nullptr;
         pipeline_layout_descriptor.label = (desc.name + "_pipelineLayout").c_str();
         vector<WGPUBindGroupLayout> bind_group_layouts;
+        // bind group layouts, including builtin uniforms and shader specific properties
         bind_group_layouts.push_back(get_builtin_bind_group_layout(device));
         bind_group_layouts.push_back(bind_group_layout);
         pipeline_layout_descriptor.bindGroupLayoutCount = 1;
@@ -224,5 +225,9 @@ namespace frieren_core {
     set<string> Shader::get_property_names() const {
         const auto& names = this->shader_property_layout.get_names();
         return {names.begin(), names.end()};
+    }
+
+    void Shader::set_pipeline_for_render_pass(WGPURenderPassEncoder render_pass) const {
+        wgpuRenderPassEncoderSetPipeline(render_pass, this->render_pipeline);
     }
 }

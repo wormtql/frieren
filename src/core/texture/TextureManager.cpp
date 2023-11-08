@@ -31,22 +31,36 @@ namespace frieren_core {
         }
     }
 
-    optional<shared_ptr<Texture>> TextureManager::get_texture(WGPUDevice device, WGPUQueue queue, const string& name) {
-        if (loaded_textures.find(name) != loaded_textures.end()) {
-            return loaded_textures[name];
+    optional<shared_ptr<Texture>> TextureManager::get_texture(WGPUDevice device, WGPUQueue queue, const string& id) {
+        if (loaded_textures.find(id) != loaded_textures.end()) {
+            return loaded_textures[id];
         }
 
-        if (loaded_texture_descriptors.find(name) != loaded_texture_descriptors.end()) {
-            const auto& desc = loaded_texture_descriptors[name];
+        if (loaded_texture_descriptors.find(id) != loaded_texture_descriptors.end()) {
+            const auto& desc = loaded_texture_descriptors[id];
             shared_ptr<Texture> texture = make_shared<Texture>(device, desc);
 
             // write texture data
             texture->write_texture(queue);
 
-            loaded_textures[name] = texture;
+            loaded_textures[id] = texture;
             return texture;
         }
 
         return {};
+    }
+
+    shared_ptr<Texture> TextureManager::create_render_texture(
+        WGPUDevice device,
+        const string& name,
+        int width,
+        int height,
+        int channel,
+        WGPUTextureFormat format
+    ) {
+        Texture texture{device, name, width, height, channel, format};
+        const string& id = texture.get_id();
+
+        this->loaded_textures[id] = make_shared<Texture>(std::move(texture));
     }
 }

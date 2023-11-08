@@ -27,6 +27,10 @@ namespace frieren_core {
         void create_wgpu_buffer(WGPUDevice device);
         
         void update_uniform_buffer(WGPUQueue queue);
+
+        WGPUBuffer get_buffer() const {
+            return buffer;
+        }
     };
 }
 

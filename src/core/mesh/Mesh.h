@@ -26,6 +26,17 @@ namespace frieren_core {
         void create_gpu_buffer(WGPUDevice device);
 
         void write_gpu_buffer(WGPUQueue queue);
+
+        /**
+         * @brief Set the buffer for render pass object
+         * set vertex buffer and index buffer
+         * @param render_pass 
+         */
+        void set_buffer_for_render_pass(WGPURenderPassEncoder render_pass) const;
+    
+        size_t get_index_count() const {
+            return indices.size();
+        }
     };
 }
 

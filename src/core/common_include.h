@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <typeinfo>
 #include <type_traits>
+#include <array>
 
 #include <nlohmann/json.hpp>
 

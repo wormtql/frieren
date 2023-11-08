@@ -23,7 +23,17 @@ namespace frieren_core {
 
         void init_all_texture_descriptors();
 
-        optional<shared_ptr<Texture>> get_texture(WGPUDevice device, WGPUQueue queue, const string& name);
+        /**
+         * @brief Get the texture object
+         * this operation will trigger GPU write texture data if the texture has data and not yet written
+         * @param device 
+         * @param queue 
+         * @param name 
+         * @return optional<shared_ptr<Texture>> 
+         */
+        optional<shared_ptr<Texture>> get_texture(WGPUDevice device, WGPUQueue queue, const string& id);
+
+        shared_ptr<Texture> create_render_texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format);
     };
 }
 

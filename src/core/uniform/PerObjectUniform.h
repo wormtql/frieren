@@ -15,9 +15,9 @@ namespace frieren_core {
     const int MAX_PER_OBJECT_UNIFORM_COUNT = 10000;
 
     class PerObjectUniform {
-    private:
+    public:
         WGPUBuffer buffer = nullptr;
-        vector<PerObjectUniformData> data;
+        PerObjectUniformData data;
     public:
         PerObjectUniform() = default;
         PerObjectUniform(const PerObjectUniform& other) = delete;
@@ -26,6 +26,10 @@ namespace frieren_core {
         void create_wgpu_buffer(WGPUDevice device);
 
         void update_uniform_buffer(WGPUQueue queue);
+
+        WGPUBuffer get_buffer() const {
+            return buffer;
+        }
     };
 }
 

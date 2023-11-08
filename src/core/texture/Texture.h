@@ -9,6 +9,7 @@ using namespace std;
 namespace frieren_core {
     struct TextureDescriptor {
         string name;
+        string id;
         string texture_data_path;
         WGPUTextureDimension dimension;
         WGPUTextureViewDimension texture_view_dimension;
@@ -22,6 +23,7 @@ namespace frieren_core {
     private:
         static set<string> texture_ext_stbi;
 
+        string id;
         void* cpu_data = nullptr;
         WGPUExtent3D texture_size;
         int pixel_size;
@@ -31,11 +33,16 @@ namespace frieren_core {
     public:
         Texture(WGPUTexture texture, WGPUTextureView texture_view);
         explicit Texture(WGPUDevice device, const TextureDescriptor& texture_desc);
+        Texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format);
         ~Texture();
 
         WGPUTextureView get_wgpu_texture_view() const;
 
         void write_texture(WGPUQueue queue) const;
+
+        const string& get_id() const {
+            return id;
+        }
     };
 }
 

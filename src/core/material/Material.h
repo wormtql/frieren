@@ -53,10 +53,21 @@ namespace frieren_core {
 
         void set_sampler(const string& name, shared_ptr<Sampler> sampler);
 
-        // it should be called if textures or samplers change
+        /**
+         * @brief build bind group for render pass
+         * this should be called if textures or samplers change
+         * @param device 
+         */
         void build_bind_group(WGPUDevice device);
 
+        /**
+         * @brief write shader property into uniform buffer
+         * 
+         * @param queue 
+         */
         void set_uniform_buffer(WGPUQueue queue) const;
+
+        void use_material(WGPURenderPassEncoder render_pass) const;
     };
 }
 

@@ -114,6 +114,16 @@ namespace frieren_core {
         }
         wgpuQueueWriteBuffer(queue, buffer, 0, cpu_buffer, shader_property_layout.get_total_size());
     }
+
+    void Material::use_material(WGPURenderPassEncoder render_pass) const {
+        // set pipeline
+        this->shader->set_pipeline_for_render_pass(render_pass);
+
+        // set shader bind group (shader properties, textures, samplers, ...)
+        if (this->bind_group) {
+            wgpuRenderPassEncoderSetBindGroup(render_pass, 1, this->bind_group, 0, nullptr);
+        }
+    }
 }
 
 // serde

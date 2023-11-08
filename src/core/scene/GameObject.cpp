@@ -25,6 +25,10 @@ namespace frieren_core {
     const map<string, shared_ptr<Component>>& GameObject::get_components() const {
         return components;
     }
+
+    map<string, shared_ptr<Component>>& GameObject::get_components_mut() {
+        return components;
+    }
 }
 
 // serde

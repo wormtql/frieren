@@ -88,6 +88,8 @@ namespace frieren_core {
         set<string> get_sampler_names() const;
 
         set<string> get_property_names() const;
+
+        void set_pipeline_for_render_pass(WGPURenderPassEncoder render_pass) const;
     };
 }
 

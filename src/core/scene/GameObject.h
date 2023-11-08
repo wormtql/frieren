@@ -38,6 +38,8 @@ namespace frieren_core {
 
         [[nodiscard]] const map<string, shared_ptr<Component>>& get_components() const;
 
+        [[nodiscard]] map<string, shared_ptr<Component>>& get_components_mut();
+
         friend void from_json(const json& j, GameObject& go);
     };
 
