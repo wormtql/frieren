@@ -1,4 +1,5 @@
 #include "ShaderProperty.h"
+#include <glm_serde.h>
 
 namespace frieren_core {
     int get_size(ShaderPropertyType ty) {
@@ -41,7 +42,7 @@ namespace frieren_core {
     }
 
     ShaderPropertyLayout ShaderPropertyLayoutBuilder::build() const {
-        return ShaderPropertyLayout(types, names);
+        return std::move(ShaderPropertyLayout(types, names));
     }
 
     ShaderPropertyLayout::ShaderPropertyLayout(vector<ShaderPropertyType> types, vector<string> names) {
@@ -61,13 +62,15 @@ namespace frieren_core {
 
         calc_offsets();
 
-        int just_past_last = offsets[len - 1] + sizes[len - 1];
-        if (just_past_last % align_of_struct == 0) {
-            size_of_struct = just_past_last;
-            struct_size_padding = 0;
-        } else {
-            struct_size_padding = align_of_struct - (just_past_last % align_of_struct);
-            size_of_struct = just_past_last + struct_size_padding;
+        if (len != 0) {
+            int just_past_last = offsets[len - 1] + sizes[len - 1];
+            if (just_past_last % align_of_struct == 0) {
+                size_of_struct = just_past_last;
+                struct_size_padding = 0;
+            } else {
+                struct_size_padding = align_of_struct - (just_past_last % align_of_struct);
+                size_of_struct = just_past_last + struct_size_padding;
+            }
         }
     }
 
@@ -134,14 +137,24 @@ namespace frieren_core {
     }
 
     void from_json(const json& j, ShaderProperty& prop) {
-        // todo
-        // ShaderPropertyType ty = j["type"].template get<ShaderPropertyType>();
-        // prop.ty = ty;
+        ShaderPropertyType ty = j["type"].template get<ShaderPropertyType>();
+        prop.ty = ty;
 
-        // if (ty == ShaderPropertyType::Float1) {
-        //     float f = j["value"].template get<float>();
-        //     prop.value = ShaderPropertyValue {.float_value = f};
-        // } else if (ty == ShaderPropertyType)
+        if (ty == ShaderPropertyType::Float1) {
+            float f = j["value"].template get<float>();
+            prop.value.float_value = f;
+        } else if (ty == ShaderPropertyType::Float2) {
+            glm::vec2 f = j["value"].template get<glm::vec2>();
+            prop.value.float2_value = f;
+        } else if (ty == ShaderPropertyType::Float3) {
+            prop.value.float3_value = j["value"].template get<glm::vec3>();
+        } else if (ty == ShaderPropertyType::Float4) {
+            prop.value.float4_value = j["value"].template get<glm::vec4>();
+        } else if (ty == ShaderPropertyType::Uint32) {
+            prop.value.uint32_value = j["value"].template get<uint32_t>();
+        } else if (ty == ShaderPropertyType::Mat4x4) {
+            prop.value.mat4x4_value = j["value"].template get<glm::mat4x4>();
+        }
     }
 
     void from_json(const json& j, ShaderPropertyLayoutBuilder& builder) {

@@ -5,7 +5,7 @@
 #include "BindGroupLayoutBuilder.h"
 
 namespace frieren_core {
-    void set_default(WGPUBindGroupLayoutEntry e) {
+    void set_default(WGPUBindGroupLayoutEntry& e) {
         e.buffer.nextInChain = nullptr;
         e.buffer.type = WGPUBufferBindingType_Undefined;
         e.buffer.hasDynamicOffset = false;
@@ -35,6 +35,7 @@ namespace frieren_core {
 
         e.buffer.type = WGPUBufferBindingType_Uniform;
         e.buffer.hasDynamicOffset = false;
+        e.buffer.minBindingSize = 0;
 
         entries.push_back(e);
 
@@ -74,8 +75,9 @@ namespace frieren_core {
     }
 
     WGPUBindGroupLayout BindGroupLayoutBuilder::build(WGPUDevice device) const {
-        WGPUBindGroupLayoutDescriptor desc;
+        WGPUBindGroupLayoutDescriptor desc{};
         desc.nextInChain = nullptr;
+        desc.label = "Builtin bind group layout";
         desc.entryCount = entries.size();
         desc.entries = entries.data();
         WGPUBindGroupLayout layout = wgpuDeviceCreateBindGroupLayout(device, &desc);

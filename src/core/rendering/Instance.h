@@ -15,6 +15,9 @@
 #include <common_include_glm.h>
 #include "BuiltinBindGroupLayout.h"
 #include "RenderingContext.h"
+#include <pipeline/RenderPipeline.h>
+#include <GLFW/glfw3.h>
+#include <glfw3webgpu.h>
 
 using namespace std;
 
@@ -27,6 +30,7 @@ namespace frieren_core {
         WGPUDevice device;
         WGPUQueue queue;
         WGPUSwapChain swap_chain;
+        GLFWwindow* window;
 
         filesystem::path project_path;
     
@@ -38,6 +42,10 @@ namespace frieren_core {
 
         // rendering context
         RenderingContext rendering_context;
+        // pipeline
+        shared_ptr<RenderPipeline> render_pipeline;
+        // scene
+        shared_ptr<Scene> current_scene;
 
         WGPUAdapter request_adapter(const WGPURequestAdapterOptions& options);
     
@@ -72,6 +80,16 @@ namespace frieren_core {
         GameObject load_game_object_from_json(const json& j);
 
         Scene load_scene_from_json(const json& j);
+
+        /**
+         * @brief load scene from asset path
+         * a scene located at /project_root/assets/scenes/s1.json can be loaded by "scenes/s1.json"
+         * @param relative_path 
+         * @return Scene 
+         */
+        Scene load_scene_from_relative_path(const filesystem::path& relative_path);
+
+        void run();
     };
 }
 

@@ -32,7 +32,7 @@ namespace frieren_core {
                     filesystem::path p = dir_entry.path();
                     filesystem::path filename = p.filename();
                     auto name = filename.string();
-                    if (name.ends_with(".sampler.json")) {
+                    if (name.ends_with(".material.json")) {
                         load_material_descriptor(p);
                     }
                 }

@@ -1,0 +1,52 @@
+{
+    "name": "sampleScene",
+    "id": "sampleSceneID",
+    "game_objects": [
+        {
+            "name": "go1",
+            "id": "go_id1",
+            "components": [
+                {
+                    "Transform": {
+                        "id": "transform1",
+                        "position": [0, 0, 0],
+                        "rotation": [0, 0, 0],
+                        "scale": 1,
+                        "parent": "transform2"
+                    }
+                },
+                {
+                    "MeshFilter": {
+                        "id": "MeshFilter",
+                        "mesh": "frieren::cube"
+                    }
+                },
+                {
+                    "MeshRenderer": {
+                        "id": "MeshRenderer1",
+                        "materials": [
+                            "simpleMatID"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "go2",
+            "id": "go_id2",
+            "components": [
+                {
+                    "Transform": {
+                        "id": "transform2",
+                        "position": [0, 0, 0],
+                        "rotation": [10, 20, 30],
+                        "scale": 1,
+                        "children": [
+                            "transform1"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -10,7 +10,7 @@ namespace frieren_core {
     }
 
     void PerFrameUniform::create_wgpu_buffer(WGPUDevice device) {
-        WGPUBufferDescriptor desc;
+        WGPUBufferDescriptor desc{};
         desc.nextInChain = nullptr;
         desc.label = "per_frame_uniform";
         desc.usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;

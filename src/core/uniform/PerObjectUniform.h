@@ -12,8 +12,6 @@ namespace frieren_core {
         glm::mat4x4 frieren_object_matrix;
     };
 
-    const int MAX_PER_OBJECT_UNIFORM_COUNT = 10000;
-
     class PerObjectUniform {
     public:
         WGPUBuffer buffer = nullptr;

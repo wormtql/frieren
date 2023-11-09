@@ -236,7 +236,7 @@ void from_json(const json& j, WGPUStencilFaceState& stencil_face_state) {
 void from_json(const json& j, WGPUPrimitiveState& primitive_state) {
     primitive_state.nextInChain = nullptr;
     primitive_state.topology = j["topology"].template get<WGPUPrimitiveTopology>();
-    primitive_state.stripIndexFormat = j["stripIndexFormat"].template get<WGPUIndexFormat>();
+    primitive_state.stripIndexFormat = j["strip_index_format"].template get<WGPUIndexFormat>();
     primitive_state.frontFace = j["front_face"].template get<WGPUFrontFace>();
     primitive_state.cullMode = j["cull_mode"].template get<WGPUCullMode>();
 }
@@ -295,7 +295,9 @@ void from_json(const json& j, WGPUColorTargetStateOwned& state) {
 void from_json(const json& j, WGPUMultisampleState& state) {
     state.nextInChain = nullptr;
     state.count = j["count"];
-    state.mask = j["mask"];
+    // state.mask = j["mask"];
+    // todo
+    state.mask = ~0u;
     state.alphaToCoverageEnabled = j["alpha_to_coverage_enabled"];
 }
 

@@ -35,15 +35,15 @@ namespace frieren_core {
             json j = json::parse(shader_meta_string);
             ShaderDescriptor shader_desc = j.template get<ShaderDescriptor>();
 
-            filesystem::path shader_source_path = path;
-            shader_source_path += shader_desc.shader_source_path;
+            filesystem::path shader_source_path = path.parent_path();
+            shader_source_path = shader_source_path / shader_desc.shader_source_path;
             if (filesystem::exists(shader_source_path)) {
                 string shader_source_string = utils::read_file_to_string(shader_source_path).value();
                 shader_desc.shader_source = move(shader_source_string);
             }
 
-            if (!loaded_shader_descriptors.contains(shader_desc.name)) {
-                loaded_shader_descriptors[shader_desc.name] = shader_desc;
+            if (!loaded_shader_descriptors.contains(shader_desc.id)) {
+                loaded_shader_descriptors[shader_desc.id] = shader_desc;
             }
 
             return true;
@@ -52,18 +52,18 @@ namespace frieren_core {
         return false;
     }
 
-    optional<shared_ptr<Shader>> ShaderManager::get_shader(WGPUDevice device, const string& name) {
-        if (loaded_shaders.find(name) != loaded_shaders.end()) {
-            return loaded_shaders[name];
+    optional<shared_ptr<Shader>> ShaderManager::get_shader(WGPUDevice device, const string& id) {
+        if (loaded_shaders.find(id) != loaded_shaders.end()) {
+            return loaded_shaders[id];
         }
 
-        if (!loaded_shader_descriptors.contains(name)) {
+        if (!loaded_shader_descriptors.contains(id)) {
             return {};
         } else {
-            const auto& shader_desc = loaded_shader_descriptors[name];
+            const auto& shader_desc = loaded_shader_descriptors[id];
             // Shader shader{device, shader_desc};
             auto shader = make_shared<Shader>(device, shader_desc);
-            loaded_shaders[name] = shader;
+            loaded_shaders[id] = shader;
             return shader;
         }
     }

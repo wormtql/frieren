@@ -27,7 +27,7 @@ namespace frieren_core {
 
         void add_search_paths(filesystem::path p);
 
-        optional<shared_ptr<Shader>> get_shader(WGPUDevice device, const string& name);
+        optional<shared_ptr<Shader>> get_shader(WGPUDevice device, const string& id);
     };
 }
 

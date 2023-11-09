@@ -7,7 +7,13 @@
 namespace glm {
     void from_json(const json& j, glm::vec3& v);
 
+    void from_json(const json& j, glm::vec2& v);
+
+    void from_json(const json& j, glm:: vec4& v);
+
     void from_json(const json& j, glm::quat& quat);
+
+    void from_json(const json& j, glm::mat4x4& mat);
 }
 
 #endif

@@ -11,6 +11,7 @@ namespace frieren_core::component {
     void ComponentRegistry::init_deserializer() {
         add_deserializer<Transform>();
         add_deserializer<MeshRenderer>();
+        add_deserializer<MeshFilter>();
     }
 
     optional<shared_ptr<Component>> ComponentRegistry::deserialize_component(const json &j) {

@@ -23,12 +23,12 @@ namespace frieren_core {
         const glm::mat4x4& transform_matrix,
         shared_ptr<Material> material
     ) {
-        WGPUCommandEncoderDescriptor command_encoder_desc;
+        WGPUCommandEncoderDescriptor command_encoder_desc{};
         command_encoder_desc.nextInChain = nullptr;
         command_encoder_desc.label = "Draw Mesh";
         WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, &command_encoder_desc);
 
-        WGPURenderPassDescriptor render_pass_desc;
+        WGPURenderPassDescriptor render_pass_desc{};
         render_pass_desc.timestampWriteCount = 0;
         render_pass_desc.timestampWrites = nullptr;
         render_pass_desc.nextInChain = nullptr;
@@ -65,7 +65,7 @@ namespace frieren_core {
         wgpuRenderPassEncoderDrawIndexed(render_pass_encoder, mesh->get_index_count(), 1, 0, 0, 0);
         wgpuRenderPassEncoderEnd(render_pass_encoder);
 
-        WGPUCommandBufferDescriptor cmd_buffer_desc;
+        WGPUCommandBufferDescriptor cmd_buffer_desc{};
         cmd_buffer_desc.nextInChain = nullptr;
         cmd_buffer_desc.label = "Command Buffer";
 

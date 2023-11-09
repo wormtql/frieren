@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <glfw3webgpu.h>
+#include <utilities/utils.h>
 
 namespace frieren_core {
     WGPUAdapter Instance::request_adapter(const WGPURequestAdapterOptions& options) {
@@ -166,25 +167,25 @@ namespace frieren_core {
             sampler_manager
         );
         // material_manager->add_search_path("")
-        material_manager->add_search_path(this->project_path.append("assets"));
+        material_manager->add_search_path(this->project_path / "assets");
         material_manager->load_all_descriptors();
     }
 
     void Instance::setup_sampler_manager() {
         this->sampler_manager = make_shared<SamplerManager>();
-        sampler_manager->add_search_path(this->project_path.append("assets"));
+        sampler_manager->add_search_path(this->project_path / "assets");
         sampler_manager->init_all_sampler_descriptors();
     }
 
     void Instance::setup_texture_manager() {
         this->texture_manager = make_shared<TextureManager>();
-        texture_manager->add_search_path(this->project_path.append("assets"));
+        texture_manager->add_search_path(this->project_path / "assets");
         texture_manager->init_all_texture_descriptors();
     }
 
     void Instance::setup_shader_manager() {
         this->shader_manager = make_shared<ShaderManager>();
-        shader_manager->add_search_paths(this->project_path.append("assets"));
+        shader_manager->add_search_paths(this->project_path / "assets");
         shader_manager->init_all_shaders();
     }
 
@@ -195,7 +196,7 @@ namespace frieren_core {
     }
 
     void Instance::create_wgpu_context() {
-        WGPUInstanceDescriptor instance_desc;
+        WGPUInstanceDescriptor instance_desc{};
         instance_desc.nextInChain = nullptr;
 
         this->instance = wgpuCreateInstance(&instance_desc);
@@ -205,8 +206,9 @@ namespace frieren_core {
         }
         std::cout << "WGPU instance: " << instance << std::endl;
 
+        glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        GLFWwindow *window = glfwCreateWindow(640, 480, "Learn WebGPU", nullptr, nullptr);
+        this->window = glfwCreateWindow(640, 480, "Learn WebGPU", nullptr, nullptr);
         if (!window) {
             std::cerr << "Could not open window!" << std::endl;
             glfwTerminate();
@@ -253,7 +255,7 @@ namespace frieren_core {
         wgpuQueueOnSubmittedWorkDone(queue, onQueueWorkDone, nullptr);
 #endif // WEBGPU_BACKEND_DAWN
 
-        WGPUSwapChainDescriptor swap_chain_desc;
+        WGPUSwapChainDescriptor swap_chain_desc{};
         swap_chain_desc.nextInChain = nullptr;
         swap_chain_desc.width = 640;
         swap_chain_desc.height = 480;
@@ -335,5 +337,30 @@ namespace frieren_core {
         }
 
         return std::move(scene);
+    }
+
+    Scene Instance::load_scene_from_relative_path(const filesystem::path& relative_path) {
+        auto scene_abs_path = this->project_path / "assets" / relative_path;
+        string json_string = utils::read_file_to_string(scene_abs_path).value();
+        json j = json::parse(json_string);
+        return std::move(load_scene_from_json(j));
+    }
+
+    void Instance::run() {
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+
+            WGPUTextureView next_texture = wgpuSwapChainGetCurrentTextureView(swap_chain);
+            if (!next_texture) {
+                std::cerr << "Cannot acquire next swap chain texture" << std::endl;
+                break;
+            }
+
+            // render
+            // this->render_pipeline
+
+            wgpuTextureViewRelease(next_texture);
+            wgpuSwapChainPresent(swap_chain);
+        }
     }
 }

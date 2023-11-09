@@ -17,9 +17,9 @@ namespace frieren_core {
     public:
         MeshManager() = default;
 
-        optional<shared_ptr<Mesh>> get_mesh(const string& name) const;
+        optional<shared_ptr<Mesh>> get_mesh(const string& id) const;
 
-        optional<shared_ptr<Mesh>> get_mesh_with_gpu(WGPUDevice device, WGPUQueue queue, const string& name);
+        optional<shared_ptr<Mesh>> get_mesh_with_gpu(WGPUDevice device, WGPUQueue queue, const string& id);
 
         void init_builtin_mesh(WGPUDevice device, WGPUQueue queue);
     };

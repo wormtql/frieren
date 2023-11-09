@@ -1,4 +1,5 @@
 #include "Sampler.h"
+#include <wgpu_serde.h>
 
 namespace frieren_core {
     void from_json(const json& j, SamplerDescriptor& desc) {
@@ -16,7 +17,7 @@ namespace frieren_core {
     }
 
     WGPUSamplerDescriptor SamplerDescriptor::get_wgpu_sampler_descriptor() const {
-        WGPUSamplerDescriptor desc;
+        WGPUSamplerDescriptor desc{};
 
         desc.nextInChain = nullptr;
         desc.label = name.c_str();

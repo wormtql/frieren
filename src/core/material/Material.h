@@ -16,7 +16,7 @@ namespace frieren_core {
     struct MaterialDescriptor {
         string name;
         optional<string> id;
-        string shader_name;
+        string shader_id;
         map<string, ShaderProperty> shader_properties;
         map<string, string> shader_textures;
         map<string, string> shader_samplers;

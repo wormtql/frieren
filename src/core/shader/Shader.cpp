@@ -12,6 +12,7 @@ namespace frieren_core {
         shader_desc.shader_source_path = j["shader_source_path"];
         shader_desc.shader_source = "";
         shader_desc.name = j["name"];
+        shader_desc.id = j["id"];
 
         shader_desc.primitive_state = j["primitive_state"].template get<WGPUPrimitiveState>();
         shader_desc.depth_stencil_state = j["depth_stencil_state"].template get<WGPUDepthStencilState>();
@@ -97,22 +98,24 @@ namespace frieren_core {
     }
 
     Shader::Shader(WGPUDevice device, const ShaderDescriptor& desc) {
-        WGPUShaderModuleDescriptor shader_module_desc;
+        // create shader module
+        WGPUShaderModuleDescriptor shader_module_desc{};
         shader_module_desc.label = desc.name.c_str();
-        WGPUShaderModuleWGSLDescriptor wgsl_desc;
+        WGPUShaderModuleWGSLDescriptor wgsl_desc{};
         wgsl_desc.chain.next = nullptr;
         wgsl_desc.chain.sType = WGPUSType_ShaderModuleWGSLDescriptor;
         wgsl_desc.code = desc.shader_source.c_str();
         shader_module_desc.nextInChain = &wgsl_desc.chain;
-        shader_property_layout = desc.shader_property_layout_builder.build();
-
         this->shader_source = desc.shader_source;
         this->shader_module = wgpuDeviceCreateShaderModule(device, &shader_module_desc);
+
+        shader_property_layout = desc.shader_property_layout_builder.build();
+        
         this->name = desc.name;
         this->instancing = desc.is_instancing;
         this->bind_group_layout_entries = desc.bind_group_layout_entries;
 
-        WGPUBindGroupLayoutDescriptor bind_group_layout_descriptor;
+        WGPUBindGroupLayoutDescriptor bind_group_layout_descriptor{};
         vector<WGPUBindGroupLayoutEntry> bind_entries;
         for (const auto& item: desc.bind_group_layout_entries) {
             bind_entries.push_back(item.to_wgpu_entry());
@@ -124,19 +127,19 @@ namespace frieren_core {
 
         this->bind_group_layout = wgpuDeviceCreateBindGroupLayout(device, &bind_group_layout_descriptor);
 
-        WGPUPipelineLayoutDescriptor pipeline_layout_descriptor;
+        WGPUPipelineLayoutDescriptor pipeline_layout_descriptor{};
         pipeline_layout_descriptor.nextInChain = nullptr;
         pipeline_layout_descriptor.label = (desc.name + "_pipelineLayout").c_str();
         vector<WGPUBindGroupLayout> bind_group_layouts;
         // bind group layouts, including builtin uniforms and shader specific properties
         bind_group_layouts.push_back(get_builtin_bind_group_layout(device));
         bind_group_layouts.push_back(bind_group_layout);
-        pipeline_layout_descriptor.bindGroupLayoutCount = 1;
+        pipeline_layout_descriptor.bindGroupLayoutCount = bind_group_layouts.size();
         pipeline_layout_descriptor.bindGroupLayouts = bind_group_layouts.data();
 
         WGPUPipelineLayout pipeline_layout = wgpuDeviceCreatePipelineLayout(device, &pipeline_layout_descriptor);
 
-        WGPURenderPipelineDescriptor render_pipeline_descriptor;
+        WGPURenderPipelineDescriptor render_pipeline_descriptor{};
 
         std::vector<WGPUVertexBufferLayoutOwned> vertex_buffer_layouts_owned;
         vertex_buffer_layouts_owned.push_back(Vertex::get_vertex_buffer_layout());
@@ -173,7 +176,7 @@ namespace frieren_core {
 
         this->render_pipeline = wgpuDeviceCreateRenderPipeline(device, &render_pipeline_descriptor);
 
-        WGPUBufferDescriptor shader_prop_buffer_desc;
+        WGPUBufferDescriptor shader_prop_buffer_desc{};
         shader_prop_buffer_desc.nextInChain = nullptr;
         shader_prop_buffer_desc.label = (desc.name + "_buffer").c_str();
         shader_prop_buffer_desc.usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;

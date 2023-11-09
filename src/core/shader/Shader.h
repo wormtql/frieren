@@ -30,6 +30,7 @@ namespace frieren_core {
         string shader_source_path;
         string shader_source;
         string name;
+        string id;
 
         // triangle or line or ...
         WGPUPrimitiveState primitive_state;

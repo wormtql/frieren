@@ -10,11 +10,11 @@ namespace frieren_core {
     }
 
     void PerObjectUniform::create_wgpu_buffer(WGPUDevice device) {
-        WGPUBufferDescriptor desc;
+        WGPUBufferDescriptor desc{};
         desc.nextInChain = nullptr;
         desc.label = "per_object_uniform";
         desc.usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform;
-        desc.size = MAX_PER_OBJECT_UNIFORM_COUNT * sizeof(PerObjectUniformData);
+        desc.size = sizeof(PerObjectUniformData);
         desc.mappedAtCreation = false;
 
         buffer = wgpuDeviceCreateBuffer(device, &desc);

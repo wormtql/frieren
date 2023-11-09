@@ -4,14 +4,16 @@
 #include <components/Component.h>
 #include <components/Transform.h>
 #include <components/ComponentRegistry.h>
+#include <rendering/Instance.h>
 
 using namespace std;
 using namespace frieren_core;
 using namespace frieren_core::component;
 
 int main() {
-    ComponentRegistry component_reg;
-    cout << component_reg.creator_registry.size() << endl;
+    Instance instance{R"(E:\CLionProjects\frieren\test_project)"};
+    Scene scene = instance.load_scene_from_relative_path("scenes/sample_scene.json");
+    cout << scene.id;
 
     return 0;
 }

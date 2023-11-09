@@ -28,6 +28,7 @@ namespace frieren_core {
         glm::vec2 float2_value;
         float float_value;
         uint32_t uint32_value;
+        glm::mat4x4 mat4x4_value;
     };
 
     struct ShaderProperty {

@@ -11,7 +11,7 @@ namespace frieren_core {
         SamplerManager& sampler_manager,
         ShaderManager& shader_manager
     ) {
-        this->shader = shader_manager.get_shader(device, desc.shader_name).value();
+        this->shader = shader_manager.get_shader(device, desc.shader_id).value();
         this->name = desc.name;
         if (desc.id.has_value()) {
             this->id = desc.id.value();
@@ -131,7 +131,7 @@ namespace frieren_core {
     void from_json(const json& j, MaterialDescriptor& desc) {
         desc.name = j["name"];
         desc.id = j["id"];
-        desc.shader_name = j["shader_name"];
+        desc.shader_id = j["shader_id"];
         for (const auto& el: j["properties"].items()) {
             string key = el.key();
             ShaderProperty p = el.value().template get<ShaderProperty>();

@@ -18,6 +18,8 @@ namespace frieren_core::component {
         MeshFilter();
 
         friend void from_json(const json& j, MeshFilter& mesh_filter);
+
+        void link_referenced_mesh(MeshManager& mesh_manager) override;
     };
 }
 

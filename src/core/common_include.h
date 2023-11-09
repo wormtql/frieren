@@ -21,6 +21,7 @@
 #include <type_traits>
 #include <array>
 
+#define JSON_DISABLE_ENUM_SERIALIZATION 1
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;

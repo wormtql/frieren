@@ -1,0 +1,10 @@
+{
+    "name": "Sample Mat",
+    "id": "simpleMatID",
+    "shader_id": "frieren.color",
+    "properties": {
+
+    },
+    "textures": {},
+    "samplers": {}
+}

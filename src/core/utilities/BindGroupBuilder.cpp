@@ -66,7 +66,7 @@ namespace frieren_core {
     }
 
     WGPUBindGroup BindGroupBuilder::build(WGPUDevice device, WGPUBindGroupLayout layout) const {
-        WGPUBindGroupDescriptor desc;
+        WGPUBindGroupDescriptor desc{};
 
         desc.nextInChain = nullptr;
         desc.layout = layout;

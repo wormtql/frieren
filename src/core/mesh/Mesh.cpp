@@ -23,14 +23,14 @@ namespace frieren_core {
             index_buffer = nullptr;
         }
 
-        WGPUBufferDescriptor vertex_buffer_desc;
+        WGPUBufferDescriptor vertex_buffer_desc{};
         vertex_buffer_desc.nextInChain = nullptr;
         vertex_buffer_desc.size = vertices.size() * sizeof(Vertex);
         vertex_buffer_desc.usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex;
         vertex_buffer_desc.mappedAtCreation = false;
         vertex_buffer = wgpuDeviceCreateBuffer(device, &vertex_buffer_desc);
 
-        WGPUBufferDescriptor index_buffer_desc;
+        WGPUBufferDescriptor index_buffer_desc{};
         index_buffer_desc.nextInChain = nullptr;
         index_buffer_desc.size = indices.size() * sizeof(uint32_t);
         index_buffer_desc.usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index;

@@ -61,6 +61,8 @@ namespace frieren_core {
         Texture texture{device, name, width, height, channel, format};
         const string& id = texture.get_id();
 
-        this->loaded_textures[id] = make_shared<Texture>(std::move(texture));
+        shared_ptr<Texture> t = make_shared<Texture>(std::move(texture));
+        this->loaded_textures[id] = t;
+        return t;
     }
 }

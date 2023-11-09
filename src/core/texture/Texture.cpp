@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include <stb_image.h>
 #include <nanoid/nanoid.h>
+#include <wgpu_serde.h>
 
 namespace frieren_core {
     Texture::Texture(WGPUTexture texture, WGPUTextureView texture_view)
@@ -28,7 +29,7 @@ namespace frieren_core {
         this->pixel_size = channel;
         this->id = nanoid::generate();
 
-        WGPUTextureDescriptor wgpu_texture_desc;
+        WGPUTextureDescriptor wgpu_texture_desc{};
         wgpu_texture_desc.nextInChain = nullptr;
         wgpu_texture_desc.label = name.c_str();
         wgpu_texture_desc.usage = WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding;
@@ -41,7 +42,7 @@ namespace frieren_core {
 
         this->texture = wgpuDeviceCreateTexture(device, &wgpu_texture_desc);
 
-        WGPUTextureViewDescriptor texture_view_desc;
+        WGPUTextureViewDescriptor texture_view_desc{};
         texture_view_desc.nextInChain = nullptr;
         texture_view_desc.label = (name + "_view").c_str();
         texture_view_desc.format = format;
@@ -56,7 +57,7 @@ namespace frieren_core {
     }
 
     Texture::Texture(WGPUDevice device, const TextureDescriptor& texture_desc) {
-        WGPUTextureDescriptor wgpu_texture_desc;
+        WGPUTextureDescriptor wgpu_texture_desc{};
         wgpu_texture_desc.nextInChain = nullptr;
         wgpu_texture_desc.label = texture_desc.name.c_str();
         wgpu_texture_desc.usage = WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding;
@@ -102,7 +103,7 @@ namespace frieren_core {
         this->texture = wgpuDeviceCreateTexture(device, &wgpu_texture_desc);
         this->id = texture_desc.id;
 
-        WGPUTextureViewDescriptor texture_view_desc;
+        WGPUTextureViewDescriptor texture_view_desc{};
         texture_view_desc.nextInChain = nullptr;
         texture_view_desc.label = (texture_desc.name + "_view").c_str();
         texture_view_desc.format = texture_desc.format;
