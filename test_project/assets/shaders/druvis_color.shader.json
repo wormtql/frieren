@@ -32,7 +32,7 @@
     },
     "color_target_states": [
         {
-            "format": "RGBA8Unorm",
+            "format": "BGRA8UnormSrgb",
             "blend": {
                 "color": {
                     "src_factor": "One",

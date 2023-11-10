@@ -18,7 +18,8 @@ namespace frieren_core::component {
     void MeshRenderer::link_referenced_material(WGPUDevice device, WGPUQueue queue, MaterialManager& material_manager) {
         for (auto& mat: this->materials) {
             if (mat.object == nullptr) {
-                auto result = material_manager.get_material(device, queue, mat.referenced_id);
+                auto result = material_manager.get_material(device, queue, mat.referenced_id).value();
+                mat.object = result;
             }
         }
     }

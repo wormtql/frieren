@@ -30,6 +30,9 @@ namespace frieren_core {
         std::optional<shared_ptr<T>> remove_component();
 
         template<typename T>
+        bool has_component();
+
+        template<typename T>
         void add_component(shared_ptr<T> component);
 
         [[nodiscard]] const string& get_id() const;
@@ -44,6 +47,14 @@ namespace frieren_core {
     };
 
     // void from_json(const json& j, GameObject& go);
+
+    template<typename T>
+    bool GameObject::has_component() {
+        static_assert(std::is_base_of<Component, T>::value, "can only check game object with component");
+
+        string name = utils::get_type_name<T>();
+        return components.find(name) != components.end();
+    }
 
     template<typename T>
     void GameObject::add_component(shared_ptr<T> component) {
@@ -82,6 +93,15 @@ namespace frieren_core {
             return comp;
         }
         return {};
+    }
+
+    template<typename T>
+    optional<shared_ptr<T>> component::Component::get_component() {
+        if (game_object.object.expired()) {
+            cerr << "component referenced game object is null" << endl;
+        }
+
+        return game_object.object.lock()->get_component<T>();
     }
 }
 

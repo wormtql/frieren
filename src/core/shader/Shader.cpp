@@ -109,23 +109,12 @@ namespace frieren_core {
         this->shader_source = desc.shader_source;
         this->shader_module = wgpuDeviceCreateShaderModule(device, &shader_module_desc);
 
+
         shader_property_layout = desc.shader_property_layout_builder.build();
         
         this->name = desc.name;
         this->instancing = desc.is_instancing;
         this->bind_group_layout_entries = desc.bind_group_layout_entries;
-
-        WGPUBindGroupLayoutDescriptor bind_group_layout_descriptor{};
-        vector<WGPUBindGroupLayoutEntry> bind_entries;
-        for (const auto& item: desc.bind_group_layout_entries) {
-            bind_entries.push_back(item.to_wgpu_entry());
-        }
-        bind_group_layout_descriptor.nextInChain = nullptr;
-        bind_group_layout_descriptor.entryCount = bind_entries.size();
-        bind_group_layout_descriptor.entries = bind_entries.data();
-        bind_group_layout_descriptor.label = (desc.name + "_bindGroupLayout").c_str();
-
-        this->bind_group_layout = wgpuDeviceCreateBindGroupLayout(device, &bind_group_layout_descriptor);
 
         WGPUPipelineLayoutDescriptor pipeline_layout_descriptor{};
         pipeline_layout_descriptor.nextInChain = nullptr;
@@ -133,7 +122,22 @@ namespace frieren_core {
         vector<WGPUBindGroupLayout> bind_group_layouts;
         // bind group layouts, including builtin uniforms and shader specific properties
         bind_group_layouts.push_back(get_builtin_bind_group_layout(device));
-        bind_group_layouts.push_back(bind_group_layout);
+
+        // push bind group layout iif entries size >= 1
+        if (!desc.bind_group_layout_entries.empty()) {
+            WGPUBindGroupLayoutDescriptor bind_group_layout_descriptor{};
+            vector<WGPUBindGroupLayoutEntry> bind_entries;
+            for (const auto& item: desc.bind_group_layout_entries) {
+                bind_entries.push_back(item.to_wgpu_entry());
+            }
+            bind_group_layout_descriptor.nextInChain = nullptr;
+            bind_group_layout_descriptor.entryCount = bind_entries.size();
+            bind_group_layout_descriptor.entries = bind_entries.data();
+            bind_group_layout_descriptor.label = (desc.name + "_bindGroupLayout").c_str();
+
+            this->bind_group_layout = wgpuDeviceCreateBindGroupLayout(device, &bind_group_layout_descriptor);
+            bind_group_layouts.push_back(this->bind_group_layout);
+        }
         pipeline_layout_descriptor.bindGroupLayoutCount = bind_group_layouts.size();
         pipeline_layout_descriptor.bindGroupLayouts = bind_group_layouts.data();
 

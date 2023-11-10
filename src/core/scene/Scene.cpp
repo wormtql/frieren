@@ -30,6 +30,8 @@ namespace frieren_core {
 
                 for (const auto& comp: go2->get_components()) {
                     components[comp.second->get_id()] = comp.second;
+                    comp.second->game_object.referenced_id = go2->get_id();
+                    comp.second->game_object.object = go2;
                 }
             }
         }

@@ -4,6 +4,8 @@
 #include <glfw3webgpu.h>
 #include <utilities/utils.h>
 
+#include <utility>
+
 namespace frieren_core {
     WGPUAdapter Instance::request_adapter(const WGPURequestAdapterOptions& options) {
         struct UserData {
@@ -209,6 +211,8 @@ namespace frieren_core {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         this->window = glfwCreateWindow(640, 480, "Learn WebGPU", nullptr, nullptr);
+        this->window_width = 640;
+        this->window_height = 480;
         if (!window) {
             std::cerr << "Could not open window!" << std::endl;
             glfwTerminate();
@@ -264,9 +268,11 @@ namespace frieren_core {
 #else
         WGPUTextureFormat swapChainFormat = WGPUTextureFormat_BGRA8Unorm;
 #endif
+        cout << "swap chain format: " << swapChainFormat << endl;
         swap_chain_desc.format = swapChainFormat;
         swap_chain_desc.usage = WGPUTextureUsage_RenderAttachment;
         swap_chain_desc.presentMode = WGPUPresentMode_Fifo;
+        this->swap_chain_desc = swap_chain_desc;
 
         this->swap_chain = wgpuDeviceCreateSwapChain(device, surface, &swap_chain_desc);
     }
@@ -309,9 +315,9 @@ namespace frieren_core {
         assert(queue);
 
         auto components_mut = go.get_components_mut();
-        for (auto component: components_mut) {
-            component.second->link_referenced_mesh(*this->mesh_manager.get());
-            component.second->link_referenced_material(device, queue, *this->material_manager.get());
+        for (auto& component: components_mut) {
+            component.second->link_referenced_mesh(*this->mesh_manager);
+            component.second->link_referenced_material(device, queue, *this->material_manager);
         }
 
         return std::move(go);
@@ -331,8 +337,8 @@ namespace frieren_core {
         // but not linked with assets
         for (auto& item: scene.game_object_manager.get_game_objects_mut()) {
             for (auto& component: item.second->get_components_mut()) {
-                component.second->link_referenced_material(device, queue, *material_manager.get());
-                component.second->link_referenced_mesh(*mesh_manager.get());
+                component.second->link_referenced_material(device, queue, *material_manager);
+                component.second->link_referenced_mesh(*mesh_manager);
             }
         }
 
@@ -357,10 +363,21 @@ namespace frieren_core {
             }
 
             // render
-            // this->render_pipeline
+            this->rendering_context.set_surface_texture_view(next_texture, window_width, window_height, this->swap_chain_desc.format);
+            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
+                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
+            }
 
             wgpuTextureViewRelease(next_texture);
             wgpuSwapChainPresent(swap_chain);
         }
+    }
+
+    void Instance::set_current_scene(shared_ptr<Scene> scene) {
+        this->current_scene = std::move(scene);
+    }
+
+    void Instance::set_render_pipeline(shared_ptr<RenderPipeline> pipeline) {
+        this->render_pipeline = pipeline;
     }
 }

@@ -17,7 +17,7 @@ namespace frieren_core {
 
     namespace component {
         class Component {
-        protected:
+        public:
             string id;
             LazyWeakRef<GameObject> game_object;
         public:
@@ -28,9 +28,12 @@ namespace frieren_core {
             virtual void link_referenced_mesh(MeshManager& mesh_manager) {}
             virtual void link_referenced_material(WGPUDevice device, WGPUQueue queue, MaterialManager& material_manager) {}
 
-            optional<shared_ptr<GameObject>> get_game_object() const;
+            [[nodiscard]] optional<shared_ptr<GameObject>> get_game_object() const;
 
-            const string& get_id() const;
+            [[nodiscard]] const string& get_id() const;
+
+            template<typename T>
+            optional<shared_ptr<T>> get_component();
         };
     }
 }

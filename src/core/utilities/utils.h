@@ -1,11 +1,8 @@
-//
-// Created by 58413 on 2023/10/17.
-//
-
-#ifndef FRIEREN_UTILS_H
-#define FRIEREN_UTILS_H
+#ifndef FRIEREN_CORE_UTILS_H
+#define FRIEREN_CORE_UTILS_H
 
 #include <common_include.h>
+#include <webgpu/webgpu.hpp>
 
 using namespace std;
 
@@ -32,6 +29,8 @@ namespace frieren_core {
         }
 
         string get_json_object_any_key(const json& j);
+
+        int get_wgpu_texture_format_pixel_size(WGPUTextureFormat format);
     }
 }
 

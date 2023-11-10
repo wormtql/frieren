@@ -33,7 +33,7 @@ namespace frieren_core {
          */
         optional<shared_ptr<Texture>> get_texture(WGPUDevice device, WGPUQueue queue, const string& id);
 
-        shared_ptr<Texture> create_render_texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format);
+//        shared_ptr<Texture> create_render_texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format);
     };
 }
 

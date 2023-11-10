@@ -22,7 +22,7 @@ namespace frieren_core {
         set<string> shader_texture_names = shader->get_texture_names();
         set<string> shader_sampler_names = shader->get_sampler_names();
 
-        this->shader_properties = std::move(desc.shader_properties);
+        this->shader_properties = desc.shader_properties;
         for (const auto& t: desc.shader_textures) {
             const string& name = t.first;
             const string& texture_name = t.second;
@@ -46,6 +46,8 @@ namespace frieren_core {
             shared_ptr<Sampler> sampler = sampler_manager.get_sampler(device, sampler_name).value();
             this->shader_samplers[name] = sampler;
         }
+
+        this->build_bind_group(device);
     }
 
     Material::Material(shared_ptr<Shader> shader, const string& name) {
@@ -76,6 +78,9 @@ namespace frieren_core {
     void Material::build_bind_group(WGPUDevice device) {
         if (bind_group != nullptr) {
             wgpuBindGroupRelease(bind_group);
+        }
+        if (this->shader->get_shader_bind_group_layout_entries_ref().size() == 0) {
+            return;
         }
 
         BindGroupBuilder builder{};
@@ -120,6 +125,8 @@ namespace frieren_core {
         this->shader->set_pipeline_for_render_pass(render_pass);
 
         // set shader bind group (shader properties, textures, samplers, ...)
+        // but a shader is possible to not have any shader specific properties,
+        // where the bind_group is nullptr
         if (this->bind_group) {
             wgpuRenderPassEncoderSetBindGroup(render_pass, 1, this->bind_group, 0, nullptr);
         }

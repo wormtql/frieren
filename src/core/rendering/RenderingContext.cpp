@@ -4,24 +4,31 @@ namespace frieren_core {
     RenderingContext::RenderingContext() {
     }
 
-    void RenderingContext::set_target_color_texture(shared_ptr<Texture> texture, int slot) {
+    void RenderingContext::set_target_color_texture(WGPUTextureView texture, int slot) {
         assert(slot >= 0 && slot < 8);
 
         this->target_color_textures[slot] = texture;
     }
 
-    void RenderingContext::set_target_depth_texture(shared_ptr<Texture> texture) {
+    void RenderingContext::set_target_depth_texture(WGPUTextureView texture) {
         this->target_depth_textures = texture;
     }
 
     void RenderingContext::remove_target_depth_texture() {
         this->target_depth_textures = {};
     }
+
+    void RenderingContext::set_surface_texture_view(WGPUTextureView texture_view, int width, int height, WGPUTextureFormat format) {
+        this->surface_texture_view = texture_view;
+        this->surface_texture_width = width;
+        this->surface_texture_height = height;
+        this->surface_texture_format = format;
+    }
     
     void RenderingContext::draw_mesh(
-        shared_ptr<Mesh> mesh,
+        const shared_ptr<Mesh>& mesh,
         const glm::mat4x4& transform_matrix,
-        shared_ptr<Material> material
+        const shared_ptr<Material>& material
     ) {
         WGPUCommandEncoderDescriptor command_encoder_desc{};
         command_encoder_desc.nextInChain = nullptr;
@@ -35,20 +42,25 @@ namespace frieren_core {
         // setup color attachments
         vector<WGPURenderPassColorAttachment> color_attachments;
         for (int i = 0; i < color_attachment_size; i++) {
-            shared_ptr<Texture> texture = target_color_textures[i];
-            if (texture == nullptr) {
+            WGPUTextureView texture_view = target_color_textures[i];
+            if (texture_view == nullptr) {
                 assert(false);
             }
             WGPURenderPassColorAttachment color_attachment;
-            color_attachment.view = texture->get_wgpu_texture_view();
+            color_attachment.view = texture_view;
             color_attachment.resolveTarget = nullptr;
             color_attachment.loadOp = WGPULoadOp_Load;
             color_attachment.storeOp = WGPUStoreOp_Store;
             
-            color_attachments.emplace_back(std::move(color_attachment));
+            color_attachments.emplace_back(color_attachment);
         }
         render_pass_desc.colorAttachmentCount = color_attachments.size();
         render_pass_desc.colorAttachments = color_attachments.data();
+
+        // setup depth stencil attachments
+        if (this->target_depth_textures.has_value()) {
+            render_pass_desc.depthStencilAttachment = &this->depth_stencil_attachment;
+        }
 
         // write per object uniform data
         this->builtin_bind_group.per_object_uniform.data.frieren_object_matrix = transform_matrix;
@@ -77,5 +89,12 @@ namespace frieren_core {
         this->queue = queue;
         this->device = device;
         this->builtin_bind_group.init(device);
+    }
+
+    optional<pair<int, int>> RenderingContext::get_surface_size() const {
+        if (this->surface_texture_view.has_value()) {
+            return pair{surface_texture_width, surface_texture_height};
+        }
+        return {};
     }
 }

@@ -25,23 +25,41 @@ namespace frieren_core {
 
         string id;
         void* cpu_data = nullptr;
-        WGPUExtent3D texture_size;
-        int pixel_size;
+        WGPUExtent3D texture_size{};
+        /**
+         * how many bytes a pixel takes.
+         * For example, a RGBA8 texture takes 4 bytes per pixel
+         * a R8 texture takes 1 byte per pixel
+         * a Depth24Stencil8 texture takes 4 bytes per pixel
+         */
+        int pixel_size{};
 
-        WGPUTexture texture;
-        WGPUTextureView texture_view;
+        WGPUTexture texture{};
+        WGPUTextureView texture_view{};
     public:
+        static Texture create_depth_stencil_texture(WGPUDevice device, WGPUTextureFormat format, const string& name, int width, int height);
+
         Texture(WGPUTexture texture, WGPUTextureView texture_view);
         explicit Texture(WGPUDevice device, const TextureDescriptor& texture_desc);
-        Texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format);
+        Texture(WGPUDevice device, const string& name, int width, int height, int pixel_size, WGPUTextureFormat format, WGPUTextureUsage usage);
+        Texture(const Texture& other) = delete;
+        Texture(Texture&& other) noexcept;
         ~Texture();
 
-        WGPUTextureView get_wgpu_texture_view() const;
+        [[nodiscard]] WGPUTextureView get_wgpu_texture_view() const;
 
         void write_texture(WGPUQueue queue) const;
 
-        const string& get_id() const {
+        [[nodiscard]] const string& get_id() const {
             return id;
+        }
+
+        [[nodiscard]] int get_width() const {
+            return texture_size.width;
+        }
+
+        [[nodiscard]] int get_height() const {
+            return texture_size.height;
         }
     };
 }

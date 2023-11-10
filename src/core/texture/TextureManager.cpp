@@ -50,19 +50,19 @@ namespace frieren_core {
         return {};
     }
 
-    shared_ptr<Texture> TextureManager::create_render_texture(
-        WGPUDevice device,
-        const string& name,
-        int width,
-        int height,
-        int channel,
-        WGPUTextureFormat format
-    ) {
-        Texture texture{device, name, width, height, channel, format};
-        const string& id = texture.get_id();
-
-        shared_ptr<Texture> t = make_shared<Texture>(std::move(texture));
-        this->loaded_textures[id] = t;
-        return t;
-    }
+//    shared_ptr<Texture> TextureManager::create_render_texture(
+//        WGPUDevice device,
+//        const string& name,
+//        int width,
+//        int height,
+//        int channel,
+//        WGPUTextureFormat format
+//    ) {
+//        Texture texture{device, name, width, height, channel, format};
+//        const string& id = texture.get_id();
+//
+//        shared_ptr<Texture> t = make_shared<Texture>(std::move(texture));
+//        this->loaded_textures[id] = t;
+//        return t;
+//    }
 }

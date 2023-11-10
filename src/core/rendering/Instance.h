@@ -30,7 +30,10 @@ namespace frieren_core {
         WGPUDevice device;
         WGPUQueue queue;
         WGPUSwapChain swap_chain;
+        WGPUSwapChainDescriptor swap_chain_desc{};
         GLFWwindow* window;
+        int window_width;
+        int window_height;
 
         filesystem::path project_path;
     
@@ -88,6 +91,10 @@ namespace frieren_core {
          * @return Scene 
          */
         Scene load_scene_from_relative_path(const filesystem::path& relative_path);
+
+        void set_current_scene(shared_ptr<Scene> scene);
+
+        void set_render_pipeline(shared_ptr<RenderPipeline> pipeline);
 
         void run();
     };

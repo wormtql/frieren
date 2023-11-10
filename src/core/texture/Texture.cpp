@@ -2,6 +2,7 @@
 #include <stb_image.h>
 #include <nanoid/nanoid.h>
 #include <wgpu_serde.h>
+#include <utilities/utils.h>
 
 namespace frieren_core {
     Texture::Texture(WGPUTexture texture, WGPUTextureView texture_view)
@@ -20,25 +21,26 @@ namespace frieren_core {
         "pic",
     };
 
-    Texture::Texture(WGPUDevice device, const string& name, int width, int height, int channel, WGPUTextureFormat format) {
+    Texture::Texture(WGPUDevice device, const string& name, int width, int height, int pixel_size, WGPUTextureFormat format, WGPUTextureUsage usage) {
         this->texture_size = WGPUExtent3D {
             .width = (unsigned int) width,
             .height = (unsigned int) height,
             .depthOrArrayLayers = 1
         };
-        this->pixel_size = channel;
+        this->pixel_size = pixel_size;
         this->id = nanoid::generate();
 
         WGPUTextureDescriptor wgpu_texture_desc{};
         wgpu_texture_desc.nextInChain = nullptr;
         wgpu_texture_desc.label = name.c_str();
-        wgpu_texture_desc.usage = WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding;
+        wgpu_texture_desc.usage = usage;
         wgpu_texture_desc.dimension = WGPUTextureDimension_2D;
         wgpu_texture_desc.format = format;
         wgpu_texture_desc.mipLevelCount = 1;
         wgpu_texture_desc.sampleCount = 1;
         wgpu_texture_desc.viewFormatCount = 0;
         wgpu_texture_desc.viewFormats = nullptr;
+        wgpu_texture_desc.size = this->texture_size;
 
         this->texture = wgpuDeviceCreateTexture(device, &wgpu_texture_desc);
 
@@ -117,6 +119,19 @@ namespace frieren_core {
         this->texture_view = wgpuTextureCreateView(this->texture, &texture_view_desc);
     }
 
+    Texture::Texture(Texture&& other) noexcept {
+        this->id = other.id;
+        this->cpu_data = other.cpu_data;
+        this->texture_size = other.texture_size;
+        this->pixel_size = other.pixel_size;
+        this->texture = other.texture;
+        this->texture_view = other.texture_view;
+
+        other.cpu_data = nullptr;
+        other.texture = nullptr;
+        other.texture_view = nullptr;
+    }
+
     Texture::~Texture() {
         if (this->texture_view) {
             wgpuTextureViewRelease(this->texture_view);
@@ -154,6 +169,14 @@ namespace frieren_core {
 
         int image_size = texture_size.height * texture_size.width * texture_size.depthOrArrayLayers * pixel_size;
         wgpuQueueWriteTexture(queue, &dest, this->cpu_data, image_size, &source, &texture_size);
+    }
+
+    Texture Texture::create_depth_stencil_texture(WGPUDevice device, WGPUTextureFormat format, const string &name,
+                                                  int width, int height) {
+        int pixel_size = utils::get_wgpu_texture_format_pixel_size(format);
+
+        Texture tex{device, name, width, height, pixel_size, format, WGPUTextureUsage_RenderAttachment};
+        return move(tex);
     }
 }
 

@@ -20,6 +20,10 @@ namespace frieren_core::component {
         friend void from_json(const json& j, MeshFilter& mesh_filter);
 
         void link_referenced_mesh(MeshManager& mesh_manager) override;
+
+        [[nodiscard]] shared_ptr<Mesh> get_mesh() const {
+            return mesh.object;
+        }
     };
 }
 
