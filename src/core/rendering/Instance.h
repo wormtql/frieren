@@ -60,6 +60,8 @@ namespace frieren_core {
 
         void create_wgpu_context();
 
+        void create_imgui_context();
+
         void setup_material_manager();
 
         void setup_shader_manager();

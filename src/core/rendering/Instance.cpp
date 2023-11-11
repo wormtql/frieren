@@ -6,6 +6,10 @@
 
 #include <utility>
 
+#include <imgui.h>
+#include <backends/imgui_impl_wgpu.h>
+#include <backends/imgui_impl_glfw.h>
+
 namespace frieren_core {
     WGPUAdapter Instance::request_adapter(const WGPURequestAdapterOptions& options) {
         struct UserData {
@@ -293,6 +297,8 @@ namespace frieren_core {
         this->setup_texture_manager();
         this->setup_material_manager();
         this->setup_mesh_manager();
+
+        create_imgui_context();
     }
 
     // Instance::Instance() {
@@ -354,6 +360,7 @@ namespace frieren_core {
 
     void Instance::run() {
         while (!glfwWindowShouldClose(window)) {
+            ImGuiIO& io = ImGui::GetIO();
             glfwPollEvents();
 
             WGPUTextureView next_texture = wgpuSwapChainGetCurrentTextureView(swap_chain);
@@ -362,11 +369,61 @@ namespace frieren_core {
                 break;
             }
 
+            ImGui_ImplWGPU_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            // Our state
+            // (we use static, which essentially makes the variable globals, as a convenience to keep the example code easy to follow)
+            static bool show_demo_window = true;
+            static bool show_another_window = false;
+            static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+            // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+            if (show_demo_window)
+                ImGui::ShowDemoWindow(&show_demo_window);
+
+            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+            {
+                static float f = 0.0f;
+                static int counter = 0;
+
+                ImGui::Begin("Hello, world!");                                // Create a window called "Hello, world!" and append into it.
+
+                ImGui::Text("This is some useful text.");                     // Display some text (you can use a format strings too)
+                ImGui::Checkbox("Demo Window", &show_demo_window);            // Edit bools storing our window open/close state
+                ImGui::Checkbox("Another Window", &show_another_window);
+
+                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);                  // Edit 1 float using a slider from 0.0f to 1.0f
+                ImGui::ColorEdit3("clear color", (float*)&clear_color);       // Edit 3 floats representing a color
+
+                if (ImGui::Button("Button"))                                  // Buttons return true when clicked (most widgets return true when edited/activated)
+                    counter++;
+                ImGui::SameLine();
+                ImGui::Text("counter = %d", counter);
+
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+                ImGui::End();
+            }
+
+            // 3. Show another simple window.
+            if (show_another_window)
+            {
+                ImGui::Begin("Another Window", &show_another_window);         // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+                ImGui::Text("Hello from another window!");
+                if (ImGui::Button("Close Me"))
+                    show_another_window = false;
+                ImGui::End();
+            }
+
+            ImGui::Render();
+
             // render
             this->rendering_context.set_surface_texture_view(next_texture, window_width, window_height, this->swap_chain_desc.format);
-            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
-                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
-            }
+//            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
+//                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
+//            }
+            this->rendering_context.draw_imgui();
 
             wgpuTextureViewRelease(next_texture);
             wgpuSwapChainPresent(swap_chain);
@@ -379,5 +436,21 @@ namespace frieren_core {
 
     void Instance::set_render_pipeline(shared_ptr<RenderPipeline> pipeline) {
         this->render_pipeline = pipeline;
+    }
+
+    void Instance::create_imgui_context() {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        (void) io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+        io.IniFilename = nullptr;
+
+        ImGui::StyleColorsDark();
+
+        ImGui_ImplGlfw_InitForOther(this->window, true);
+        ImGui_ImplWGPU_Init(this->device, 3, this->swap_chain_desc.format, WGPUTextureFormat_Undefined);
     }
 }

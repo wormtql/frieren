@@ -22,3 +22,6 @@
 [submodule "3rd/nanoid_cpp"]
 	path = 3rd/nanoid_cpp
 	url = https://github.com/wormtql/nanoid_cpp.git
+[submodule "3rd/imgui"]
+	path = 3rd/imgui
+	url = https://github.com/ocornut/imgui.git

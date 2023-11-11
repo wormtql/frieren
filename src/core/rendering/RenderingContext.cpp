@@ -1,4 +1,6 @@
 #include "RenderingContext.h"
+#include <imgui.h>
+#include <backends/imgui_impl_wgpu.h>
 
 namespace frieren_core {
     RenderingContext::RenderingContext() {
@@ -96,5 +98,28 @@ namespace frieren_core {
             return pair{surface_texture_width, surface_texture_height};
         }
         return {};
+    }
+
+    void RenderingContext::draw_imgui() {
+        WGPURenderPassColorAttachment color_attachments{};
+        color_attachments.loadOp = WGPULoadOp_Load;
+        color_attachments.storeOp = WGPUStoreOp_Store;
+        color_attachments.view = surface_texture_view.value();
+        WGPURenderPassDescriptor render_pass_desc{};
+        render_pass_desc.colorAttachmentCount = 1;
+        render_pass_desc.colorAttachments = &color_attachments;
+        render_pass_desc.depthStencilAttachment = nullptr;
+
+        WGPUCommandEncoderDescriptor enc_desc{};
+        WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(this->device, &enc_desc);
+
+        WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass_desc);
+        ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), pass);
+        wgpuRenderPassEncoderEnd(pass);
+
+        WGPUCommandBufferDescriptor cmd_buffer_desc{};
+        WGPUCommandBuffer cmd_buffer = wgpuCommandEncoderFinish(encoder, &cmd_buffer_desc);
+
+        wgpuQueueSubmit(this->queue, 1, &cmd_buffer);
     }
 }

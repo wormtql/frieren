@@ -66,6 +66,8 @@ namespace frieren_core {
         void draw_mesh(
             const shared_ptr<Mesh>& mesh, const glm::mat4x4& transform_matrix, const shared_ptr<Material>& material);
 
+        void draw_imgui();
+
         [[nodiscard]] WGPUDevice get_device() const {
             return device;
         }
