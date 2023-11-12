@@ -363,6 +363,20 @@ namespace frieren_core {
             ImGuiIO& io = ImGui::GetIO();
             glfwPollEvents();
 
+            int width, height;
+            glfwGetFramebufferSize(this->window, &width, &height);
+
+            if (width != swap_chain_desc.width || height != swap_chain_desc.height) {
+//                ImGui_ImplWGPU_InvalidateDeviceObjects();
+                if (swap_chain) {
+                    wgpuSwapChainRelease(swap_chain);
+                }
+                swap_chain_desc.width = width;
+                swap_chain_desc.height = height;
+                swap_chain = wgpuDeviceCreateSwapChain(device, surface, &swap_chain_desc);
+//                ImGui_ImplWGPU_CreateDeviceObjects();
+            }
+
             WGPUTextureView next_texture = wgpuSwapChainGetCurrentTextureView(swap_chain);
             if (!next_texture) {
                 std::cerr << "Cannot acquire next swap chain texture" << std::endl;
@@ -419,7 +433,7 @@ namespace frieren_core {
             ImGui::Render();
 
             // render
-            this->rendering_context.set_surface_texture_view(next_texture, window_width, window_height, this->swap_chain_desc.format);
+            this->rendering_context.set_surface_texture_view(next_texture, swap_chain_desc.width, swap_chain_desc.height, this->swap_chain_desc.format);
 //            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
 //                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
 //            }
@@ -445,6 +459,7 @@ namespace frieren_core {
         (void) io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
         io.IniFilename = nullptr;
 

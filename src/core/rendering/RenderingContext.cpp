@@ -111,6 +111,7 @@ namespace frieren_core {
         render_pass_desc.depthStencilAttachment = nullptr;
 
         WGPUCommandEncoderDescriptor enc_desc{};
+        enc_desc.label = "Draw ImGui";
         WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(this->device, &enc_desc);
 
         WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass_desc);

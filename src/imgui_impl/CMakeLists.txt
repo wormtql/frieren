@@ -15,4 +15,7 @@ target_sources(frieren_imgui_impl PRIVATE ${PROJECT_SOURCE_DIR}/3rd/imgui/backen
 target_sources(frieren_imgui_impl PUBLIC ${PROJECT_SOURCE_DIR}/3rd/imgui/backends/imgui_impl_wgpu.h)
 target_sources(frieren_imgui_impl PRIVATE ${PROJECT_SOURCE_DIR}/3rd/imgui/backends/imgui_impl_glfw.cpp)
 target_sources(frieren_imgui_impl PUBLIC ${PROJECT_SOURCE_DIR}/3rd/imgui/backends/imgui_impl_glfw.h)
+target_sources(frieren_imgui_impl PRIVATE ${PROJECT_SOURCE_DIR}/3rd/imgui/misc/cpp/imgui_stdlib.h)
+target_sources(frieren_imgui_impl PUBLIC ${PROJECT_SOURCE_DIR}/3rd/imgui/misc/cpp/imgui_stdlib.cpp)
+
 target_include_directories(frieren_imgui_impl PUBLIC ${PROJECT_SOURCE_DIR}/3rd/imgui)

@@ -58,15 +58,15 @@ namespace frieren_core {
         string shader_source;
         WGPUShaderModule shader_module = nullptr;
         string name;
-        ShaderPropertyLayout shader_property_layout;
-        WGPUBindGroupLayout bind_group_layout;
+        ShaderPropertyLayout shader_property_layout{};
+        WGPUBindGroupLayout bind_group_layout = nullptr;
         // shader property buffer
-        WGPUBuffer shader_property_buffer;
-        vector<MyWGPUBindGroupLayoutEntry> bind_group_layout_entries;
+        WGPUBuffer shader_property_buffer = nullptr;
+        vector<MyWGPUBindGroupLayoutEntry> bind_group_layout_entries{};
 
-        bool instancing;
+        bool instancing = false;
 
-        WGPURenderPipeline render_pipeline;
+        WGPURenderPipeline render_pipeline = nullptr;
     public:
         // explicit Shader(WGPUDevice device, const WGPUShaderModuleDescriptor& desc, const ShaderPipelineKey& shader_pipeline_key);
         explicit Shader(WGPUDevice device, const ShaderDescriptor& desc);
