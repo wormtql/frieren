@@ -13,15 +13,19 @@
 #include <texture/Texture.h>
 #include <mesh/Mesh.h>
 #include <common_include_glm.h>
-#include "BuiltinBindGroupLayout.h"
-#include "RenderingContext.h"
+#include <rendering/BuiltinBindGroupLayout.h>
+#include <rendering/RenderingContext.h>
 #include <pipeline/RenderPipeline.h>
 #include <GLFW/glfw3.h>
 #include <glfw3webgpu.h>
+#include <inspector/InspectorWindow.h>
+#include <ImGuiRoot.h>
 
 using namespace std;
+using namespace frieren_core;
+using namespace frieren_editor;
 
-namespace frieren_core {
+namespace frieren_application {
     class Instance {
     private:
         WGPUInstance instance;
@@ -51,6 +55,9 @@ namespace frieren_core {
         shared_ptr<Scene> current_scene;
 
         WGPUAdapter request_adapter(const WGPURequestAdapterOptions& options);
+
+        // imgui states
+        ImGuiRoot imgui_root{};
     
         void inspect_adapter();
 

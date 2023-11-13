@@ -4,12 +4,13 @@
 #include <components/Component.h>
 #include <components/Transform.h>
 #include <components/ComponentRegistry.h>
-#include <rendering/Instance.h>
+#include <instance/Instance.h>
 #include <pipeline/DisplayColorRenderPipeline.h>
 
 using namespace std;
 using namespace frieren_core;
 using namespace frieren_core::component;
+using namespace frieren_application;
 
 int main() {
     Instance instance{R"(E:\CLionProjects\frieren\test_project)"};

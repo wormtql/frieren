@@ -4,13 +4,11 @@
 #include <glfw3webgpu.h>
 #include <utilities/utils.h>
 
-#include <utility>
-
 #include <imgui.h>
 #include <backends/imgui_impl_wgpu.h>
 #include <backends/imgui_impl_glfw.h>
 
-namespace frieren_core {
+namespace frieren_application {
     WGPUAdapter Instance::request_adapter(const WGPURequestAdapterOptions& options) {
         struct UserData {
             WGPUAdapter adapter = nullptr;
@@ -301,16 +299,6 @@ namespace frieren_core {
         create_imgui_context();
     }
 
-    // Instance::Instance() {
-    //     create_wgpu_context();
-
-    //     this->setup_sampler_manager();
-    //     this->setup_shader_manager();
-    //     this->setup_texture_manager();
-    //     this->setup_material_manager();
-    //     this->setup_mesh_manager();
-    // }
-
     GameObject Instance::load_game_object_from_json(const json& j) {
         GameObject go;
         from_json(j, go);
@@ -387,49 +375,38 @@ namespace frieren_core {
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            // Our state
-            // (we use static, which essentially makes the variable globals, as a convenience to keep the example code easy to follow)
-            static bool show_demo_window = true;
-            static bool show_another_window = false;
-            static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+            // // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+            // {
+            //     static float f = 0.0f;
+            //     static int counter = 0;
 
-            // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-            if (show_demo_window)
-                ImGui::ShowDemoWindow(&show_demo_window);
+            //     ImGui::Begin("Hello, world!");                                // Create a window called "Hello, world!" and append into it.
 
-            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-            {
-                static float f = 0.0f;
-                static int counter = 0;
+            //     ImGui::Text("This is some useful text.");                     // Display some text (you can use a format strings too)
+            //     ImGui::Checkbox("Demo Window", &show_demo_window);            // Edit bools storing our window open/close state
+            //     ImGui::Checkbox("Another Window", &show_another_window);
 
-                ImGui::Begin("Hello, world!");                                // Create a window called "Hello, world!" and append into it.
+            //     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);                  // Edit 1 float using a slider from 0.0f to 1.0f
+            //     ImGui::ColorEdit3("clear color", (float*)&clear_color);       // Edit 3 floats representing a color
 
-                ImGui::Text("This is some useful text.");                     // Display some text (you can use a format strings too)
-                ImGui::Checkbox("Demo Window", &show_demo_window);            // Edit bools storing our window open/close state
-                ImGui::Checkbox("Another Window", &show_another_window);
+            //     if (ImGui::Button("Button"))                                  // Buttons return true when clicked (most widgets return true when edited/activated)
+            //         counter++;
+            //     ImGui::SameLine();
+            //     ImGui::Text("counter = %d", counter);
 
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);                  // Edit 1 float using a slider from 0.0f to 1.0f
-                ImGui::ColorEdit3("clear color", (float*)&clear_color);       // Edit 3 floats representing a color
+            //     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            //     ImGui::End();
+            // }
 
-                if (ImGui::Button("Button"))                                  // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
 
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-                ImGui::End();
+            vector<shared_ptr<GameObject>> game_objects;
+            for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
+                game_objects.push_back(go.second);
             }
-
-            // 3. Show another simple window.
-            if (show_another_window)
-            {
-                ImGui::Begin("Another Window", &show_another_window);         // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-                ImGui::Text("Hello from another window!");
-                if (ImGui::Button("Close Me"))
-                    show_another_window = false;
-                ImGui::End();
-            }
-
+            this->imgui_root.hierarchy_window.draw(game_objects);
+            auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
+            this->imgui_root.inspector_window.set_current_game_object(go);
+            this->imgui_root.inspector_window.draw();
             ImGui::Render();
 
             // render

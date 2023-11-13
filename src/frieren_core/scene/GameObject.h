@@ -24,13 +24,13 @@ namespace frieren_core {
         GameObject();
 
         template<typename T>
-        std::optional<shared_ptr<T>> get_component();
+        std::optional<shared_ptr<T>> get_component() const;
 
         template<typename T>
         std::optional<shared_ptr<T>> remove_component();
 
         template<typename T>
-        bool has_component();
+        bool has_component() const;
 
         template<typename T>
         void add_component(shared_ptr<T> component);
@@ -44,12 +44,14 @@ namespace frieren_core {
         [[nodiscard]] map<string, shared_ptr<Component>>& get_components_mut();
 
         friend void from_json(const json& j, GameObject& go);
+
+        bool has_parent() const;
     };
 
     // void from_json(const json& j, GameObject& go);
 
     template<typename T>
-    bool GameObject::has_component() {
+    bool GameObject::has_component() const {
         static_assert(std::is_base_of<Component, T>::value, "can only check game object with component");
 
         string name = utils::get_type_name<T>();
@@ -65,12 +67,12 @@ namespace frieren_core {
     }
 
     template<typename T>
-    std::optional<shared_ptr<T>> GameObject::get_component() {
+    std::optional<shared_ptr<T>> GameObject::get_component() const {
         static_assert(std::is_base_of<Component, T>::value, "can only get component");
 
         string name = utils::get_type_name<T>();
         if (components.find(name) != components.end()) {
-            auto temp = components[name];
+            auto temp = components.at(name);
             return dynamic_pointer_cast<T, Component>(temp);
         }
         return {};

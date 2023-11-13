@@ -29,6 +29,11 @@ namespace frieren_core {
     map<string, shared_ptr<Component>>& GameObject::get_components_mut() {
         return components;
     }
+
+    bool GameObject::has_parent() const {
+        shared_ptr<Transform> t = get_component<Transform>().value();
+        return t->has_parent();
+    }
 }
 
 // serde

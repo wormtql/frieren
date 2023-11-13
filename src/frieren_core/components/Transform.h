@@ -31,11 +31,17 @@ namespace frieren_core::component {
 
         bool has_parent() const;
 
+        bool has_children() const;
+
         optional<shared_ptr<Transform>> get_parent() const;
 
         void link_referenced_components(const map<string, shared_ptr<Component>>& components) override;
 
         friend void from_json(const json& j, Transform& transform);
+
+        const vector<utils::LazyRef<Transform>>& get_children() const {
+            return children;
+        }
     };
 }
 

@@ -44,6 +44,10 @@ namespace frieren_core::component {
         return !parent.object.expired();
     }
 
+    bool Transform::has_children() const {
+        return this->children.size() > 0;
+    }
+
     optional<shared_ptr<Transform>> Transform::get_parent() const {
         if (shared_ptr<Transform> p = parent.object.lock()) {
             return p;
