@@ -8,6 +8,14 @@
 using namespace std;
 
 namespace frieren_core {
+    struct MeshDescriptor {
+        string mesh_path;
+        string id;
+        string name;
+    };
+
+    void from_json(const json& j, MeshDescriptor& desc);
+
     class Mesh {
     public:
         WGPUBuffer vertex_buffer = nullptr;
@@ -20,6 +28,7 @@ namespace frieren_core {
         string id;
 
         explicit Mesh(const string& name);
+        explicit Mesh(WGPUDevice device, WGPUQueue queue, const MeshDescriptor& desc);
 
         bool is_gpu_buffer_created();
 

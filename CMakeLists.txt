@@ -23,6 +23,12 @@ add_subdirectory(3rd/nanoid_cpp)
 # catch2
 add_subdirectory(3rd/catch2)
 
+# assimp
+if(WIN32)
+    add_compile_options(/wd4819)
+endif()
+add_subdirectory(3rd/assimp)
+
 add_executable(frieren main.cpp webgpu_cpp_impl.cpp)
 target_link_libraries(frieren glfw webgpu glfw3webgpu)
 target_copy_webgpu_binaries(frieren)

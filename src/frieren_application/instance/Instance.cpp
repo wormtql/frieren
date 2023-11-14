@@ -196,6 +196,12 @@ namespace frieren_application {
     void Instance::setup_mesh_manager() {
         this->mesh_manager = make_shared<MeshManager>();
         mesh_manager->init_builtin_mesh(device, queue);
+
+        mesh_manager->add_search_path(this->project_path / "assets");
+        mesh_manager->init_all_descriptors();
+
+        mesh_manager->device = device;
+        mesh_manager->queue = queue;
         // todo add search path
     }
 
@@ -371,50 +377,26 @@ namespace frieren_application {
                 break;
             }
 
-            ImGui_ImplWGPU_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+            // ImGui_ImplWGPU_NewFrame();
+            // ImGui_ImplGlfw_NewFrame();
+            // ImGui::NewFrame();
 
-            // // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-            // {
-            //     static float f = 0.0f;
-            //     static int counter = 0;
-
-            //     ImGui::Begin("Hello, world!");                                // Create a window called "Hello, world!" and append into it.
-
-            //     ImGui::Text("This is some useful text.");                     // Display some text (you can use a format strings too)
-            //     ImGui::Checkbox("Demo Window", &show_demo_window);            // Edit bools storing our window open/close state
-            //     ImGui::Checkbox("Another Window", &show_another_window);
-
-            //     ImGui::SliderFloat("float", &f, 0.0f, 1.0f);                  // Edit 1 float using a slider from 0.0f to 1.0f
-            //     ImGui::ColorEdit3("clear color", (float*)&clear_color);       // Edit 3 floats representing a color
-
-            //     if (ImGui::Button("Button"))                                  // Buttons return true when clicked (most widgets return true when edited/activated)
-            //         counter++;
-            //     ImGui::SameLine();
-            //     ImGui::Text("counter = %d", counter);
-
-            //     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            //     ImGui::End();
+            // vector<shared_ptr<GameObject>> game_objects;
+            // for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
+            //     game_objects.push_back(go.second);
             // }
-
-
-            vector<shared_ptr<GameObject>> game_objects;
-            for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
-                game_objects.push_back(go.second);
-            }
-            this->imgui_root.hierarchy_window.draw(game_objects);
-            auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
-            this->imgui_root.inspector_window.set_current_game_object(go);
-            this->imgui_root.inspector_window.draw();
-            ImGui::Render();
+            // this->imgui_root.hierarchy_window.draw(game_objects);
+            // auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
+            // this->imgui_root.inspector_window.set_current_game_object(go);
+            // this->imgui_root.inspector_window.draw();
+            // ImGui::Render();
 
             // render
             this->rendering_context.set_surface_texture_view(next_texture, swap_chain_desc.width, swap_chain_desc.height, this->swap_chain_desc.format);
-//            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
-//                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
-//            }
-            this->rendering_context.draw_imgui();
+            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
+                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
+            }
+            // this->rendering_context.draw_imgui();
 
             wgpuTextureViewRelease(next_texture);
             wgpuSwapChainPresent(swap_chain);

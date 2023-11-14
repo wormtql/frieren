@@ -1,9 +1,9 @@
 struct VertexInput {
     @location(0) position: vec3<f32>,
-    // @location(1) tex_coords: vec2<f32>,
-    // @location(2) normal: vec3<f32>,
-    // @location(3) tangent: vec3<f32>,
-    // @location(4) bitangent: vec3<f32>,
+    @location(1) tex_coords: vec2<f32>,
+    @location(2) normal: vec3<f32>,
+    @location(3) tangent: vec3<f32>,
+    @location(4) bitangent: vec3<f32>,
 };
 
 struct VertexOutput {
@@ -18,7 +18,9 @@ fn vs_main(
 ) -> VertexOutput {
     var out: VertexOutput;
     out.clip_position = vec4<f32>(model.position, 1.0);
-    out.color = model.position * 0.5 + 0.5;
+    // out.color = model.position * 0.5 + 0.5;
+    // out.color = model.tangent * 0.5 + 0.5;
+    out.color = model.normal * 0.5 + 0.5;
     return out;
 }
 
