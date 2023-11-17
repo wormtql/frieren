@@ -20,6 +20,8 @@ namespace frieren_editor {
     }
 
     void HierarchyWindow::draw(const vector<shared_ptr<GameObject>> &objects) {
+        ImGuiIO& io = ImGui::GetIO();
+
         ImGui::Begin("Hierarchy", &show_window);
 
         vector<shared_ptr<GameObject>> all_roots;
@@ -33,6 +35,20 @@ namespace frieren_editor {
         for (auto go: all_roots) {
             draw_node(go);
         }
+
+        if (ImGui::IsWindowHovered()) {
+            if (ImGui::IsMousePosValid()) {
+                ImGui::Text("Mouse pos: (%g, %g)", io.MousePos.x, io.MousePos.y);
+            }
+            ImGui::Text("Mouse delta: (%g, %g)", io.MouseDelta.x, io.MouseDelta.y);
+            ImGui::Text("Mouse down:");
+            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (ImGui::IsMouseDown(i)) { ImGui::SameLine(); ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
+            ImGui::Text("Mouse wheel: %.1f", io.MouseWheel);
+        }
+        // ImGui::Hover
+        // ImGui::IsMouseDown(ImGuiMouseButton_Rig)
+        // ImGui::Image()
+        
 
         ImGui::End();
     }

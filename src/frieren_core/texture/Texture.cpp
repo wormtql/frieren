@@ -21,7 +21,7 @@ namespace frieren_core {
         "pic",
     };
 
-    Texture::Texture(WGPUDevice device, const string& name, int width, int height, int pixel_size, WGPUTextureFormat format, WGPUTextureUsage usage) {
+    Texture::Texture(WGPUDevice device, const string& name, int width, int height, int pixel_size, WGPUTextureFormat format, int usage) {
         this->texture_size = WGPUExtent3D {
             .width = (unsigned int) width,
             .height = (unsigned int) height,
@@ -176,6 +176,21 @@ namespace frieren_core {
         int pixel_size = utils::get_wgpu_texture_format_pixel_size(format);
 
         Texture tex{device, name, width, height, pixel_size, format, WGPUTextureUsage_RenderAttachment};
+        return move(tex);
+    }
+
+    Texture Texture::create_same_as_swap_chain(WGPUDevice device, const string& name, const WGPUSwapChainDescriptor& swap_chain_desc) {
+        int pixel_size = utils::get_wgpu_texture_format_pixel_size(swap_chain_desc.format);
+
+        Texture tex{
+            device,
+            name,
+            (int) swap_chain_desc.width,
+            (int) swap_chain_desc.height,
+            pixel_size,
+            swap_chain_desc.format,
+            WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding
+        };
         return move(tex);
     }
 }

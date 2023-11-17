@@ -68,6 +68,8 @@ namespace frieren_core {
 
         void draw_imgui();
 
+        void clear_targets(glm::vec4 clear_color);
+
         [[nodiscard]] WGPUDevice get_device() const {
             return device;
         }

@@ -20,6 +20,8 @@
 #include <glfw3webgpu.h>
 #include <inspector/InspectorWindow.h>
 #include <ImGuiRoot.h>
+#include <camera/PerspectiveCamera.h>
+#include <texture/Texture.h>
 
 using namespace std;
 using namespace frieren_core;
@@ -53,11 +55,19 @@ namespace frieren_application {
         shared_ptr<RenderPipeline> render_pipeline;
         // scene
         shared_ptr<Scene> current_scene;
+        // intermediate image for rendering the scene
+        shared_ptr<Texture> scene_intermediate_texture;
+        // shared_ptr<Texture> scene_internediate_depth_texture;
 
         WGPUAdapter request_adapter(const WGPURequestAdapterOptions& options);
 
         // imgui states
         ImGuiRoot imgui_root{};
+
+        // scene camera state
+        shared_ptr<PerspectiveCamera> scene_camera;
+        // PerspectiveCamera scene_camera;
+        PerspectiveCameraController scene_camera_controller;
     
         void inspect_adapter();
 
@@ -78,6 +88,10 @@ namespace frieren_application {
         void setup_texture_manager();
 
         void setup_mesh_manager();
+
+        void setup_camera();
+
+        void setup_imgui_window();
     public:
         // Instance();
         explicit Instance(const filesystem::path& path);

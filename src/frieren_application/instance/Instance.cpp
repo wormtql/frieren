@@ -294,6 +294,19 @@ namespace frieren_application {
 
         // create builtin bind groups
         rendering_context.init(device, queue);
+        this->scene_intermediate_texture = make_shared<Texture>(
+            device,
+            "scene_intermediate_color_texture",
+            960,
+            600,
+            utils::get_wgpu_texture_format_pixel_size(swap_chain_desc.format),
+            swap_chain_desc.format,
+            WGPUTextureUsage_RenderAttachment | WGPUTextureUsage_TextureBinding
+        );
+        // this->scene_internediate_depth_texture = make_shared<Texture>(Texture::create_depth_stencil_texture(
+        //     device,
+        //     WGPUTextureFormat
+        // ))
 
         // setup assets managers
         this->setup_sampler_manager();
@@ -302,7 +315,12 @@ namespace frieren_application {
         this->setup_material_manager();
         this->setup_mesh_manager();
 
+        // setup camera
+        this->setup_camera();
+
+        // setup imgui states
         create_imgui_context();
+        this->setup_imgui_window();
     }
 
     GameObject Instance::load_game_object_from_json(const json& j) {
@@ -377,26 +395,50 @@ namespace frieren_application {
                 break;
             }
 
-            // ImGui_ImplWGPU_NewFrame();
-            // ImGui_ImplGlfw_NewFrame();
-            // ImGui::NewFrame();
+            // setup per frame uniform
+            glm::mat4x4 view_matrix = this->scene_camera->get_view_matrix();
+            glm::mat4x4 projection_matrix = this->scene_camera->get_projection_matrix();
+            PerFrameUniform& per_frame_uniform = rendering_context.builtin_bind_group.per_frame_uniform;
+            per_frame_uniform.data.view_matrix = view_matrix;
+            per_frame_uniform.data.projection_matrix = projection_matrix;
+            per_frame_uniform.update_uniform_buffer(queue);
 
-            // vector<shared_ptr<GameObject>> game_objects;
-            // for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
-            //     game_objects.push_back(go.second);
-            // }
-            // this->imgui_root.hierarchy_window.draw(game_objects);
-            // auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
-            // this->imgui_root.inspector_window.set_current_game_object(go);
-            // this->imgui_root.inspector_window.draw();
-            // ImGui::Render();
-
-            // render
-            this->rendering_context.set_surface_texture_view(next_texture, swap_chain_desc.width, swap_chain_desc.height, this->swap_chain_desc.format);
+            // render scene
+            this->rendering_context.set_surface_texture_view(
+                this->scene_intermediate_texture->get_wgpu_texture_view(),
+                // next_texture,
+                960, 600,
+                swap_chain_desc.format
+            );
             if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
                 this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
             }
-            // this->rendering_context.draw_imgui();
+
+            // render UI
+            this->rendering_context.set_surface_texture_view(next_texture, swap_chain_desc.width, swap_chain_desc.height, this->swap_chain_desc.format);
+            ImGui_ImplWGPU_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            vector<shared_ptr<GameObject>> game_objects;
+            for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
+                game_objects.push_back(go.second);
+            }
+            this->imgui_root.hierarchy_window.draw(game_objects);
+            auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
+            this->imgui_root.inspector_window.set_current_game_object(go);
+            this->imgui_root.inspector_window.draw();
+            this->imgui_root.scene_window.draw(scene_intermediate_texture->get_wgpu_texture_view(), 960, 600);
+
+            // ImGui::Begin("Scene");
+            // ImGui::Image(scene_intermediate_texture->get_wgpu_texture_view(), ImVec2{
+            //     960,
+            //     600
+            // });
+            // ImGui::End();
+
+            ImGui::Render();
+            this->rendering_context.draw_imgui();
 
             wgpuTextureViewRelease(next_texture);
             wgpuSwapChainPresent(swap_chain);
@@ -426,5 +468,19 @@ namespace frieren_application {
 
         ImGui_ImplGlfw_InitForOther(this->window, true);
         ImGui_ImplWGPU_Init(this->device, 3, this->swap_chain_desc.format, WGPUTextureFormat_Undefined);
+    }
+
+    void Instance::setup_camera() {
+        this->scene_camera = make_shared<PerspectiveCamera>();
+        float aspect = (float) 960 / 600;
+        // float aspect = (float) 600 / 960;
+        this->scene_camera->set_perspective_parameters(3.14f / 4, aspect, 0.1, 200);
+
+        this->scene_camera_controller.camera = this->scene_camera;
+        scene_camera_controller.translate_speed = 10;
+    }
+
+    void Instance::setup_imgui_window() {
+        imgui_root.scene_window.camera_controller = &this->scene_camera_controller;
     }
 }

@@ -51,6 +51,8 @@ namespace frieren_core {
         rendering_context.depth_stencil_attachment.stencilStoreOp = WGPUStoreOp_Store;
         rendering_context.depth_stencil_attachment.view = depth_stencil_texture->get_wgpu_texture_view();
 
+        rendering_context.clear_targets({ 0.1, 0.2, 0.3, 1 });
+
         for (int i = 0; i < mesh_renderers.size(); i++) {
             shared_ptr<MeshFilter> mesh_filter = mesh_renderers[i]->get_component<MeshFilter>().value();
             shared_ptr<MeshRenderer> mesh_renderer = mesh_renderers[i];

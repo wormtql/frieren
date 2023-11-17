@@ -6,12 +6,14 @@
 #include <backends/imgui_impl_glfw.h>
 #include "hierarchy/HierarchyWindow.h"
 #include "inspector/InspectorWindow.h"
+#include "scene_window/SceneWindow.h"
 
 namespace frieren_editor {
     class ImGuiRoot {
     public:
         HierarchyWindow hierarchy_window{};
         InspectorWindow inspector_window{};
+        SceneWindow scene_window{};
         // void draw()
     };
 }

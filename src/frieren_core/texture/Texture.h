@@ -38,10 +38,11 @@ namespace frieren_core {
         WGPUTextureView texture_view{};
     public:
         static Texture create_depth_stencil_texture(WGPUDevice device, WGPUTextureFormat format, const string& name, int width, int height);
+        static Texture create_same_as_swap_chain(WGPUDevice device, const string& name, const WGPUSwapChainDescriptor& swap_chain_desc);
 
         Texture(WGPUTexture texture, WGPUTextureView texture_view);
         explicit Texture(WGPUDevice device, const TextureDescriptor& texture_desc);
-        Texture(WGPUDevice device, const string& name, int width, int height, int pixel_size, WGPUTextureFormat format, WGPUTextureUsage usage);
+        Texture(WGPUDevice device, const string& name, int width, int height, int pixel_size, WGPUTextureFormat format, int usage);
         Texture(const Texture& other) = delete;
         Texture(Texture&& other) noexcept;
         ~Texture();
