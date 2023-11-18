@@ -254,28 +254,28 @@ namespace frieren_application {
 
         this->queue = wgpuDeviceGetQueue(device);
 
-#ifdef WEBGPU_BACKEND_DAWN
-        // Add a callback to monitor the moment queued work finished
-        auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void* /* pUserData */) {
-            std::cout << "Queued work finished with status: " << status << std::endl;
-        };
-        wgpuQueueOnSubmittedWorkDone(queue, 0 /* non standard argument for Dawn */, onQueueWorkDone, nullptr /* pUserData */);
-#else
+// #ifdef WEBGPU_BACKEND_DAWN
+//         // Add a callback to monitor the moment queued work finished
+//         auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void* /* pUserData */) {
+//             std::cout << "Queued work finished with status: " << status << std::endl;
+//         };
+//         wgpuQueueOnSubmittedWorkDone(queue, 0 /* non standard argument for Dawn */, onQueueWorkDone, nullptr /* pUserData */);
+// #else
         auto onQueueWorkDone = [](WGPUQueueWorkDoneStatus status, void *) {
             std::cout << "Queued work finished with status: " << status << std::endl;
         };
         wgpuQueueOnSubmittedWorkDone(queue, onQueueWorkDone, nullptr);
-#endif // WEBGPU_BACKEND_DAWN
+// #endif // WEBGPU_BACKEND_DAWN
 
         WGPUSwapChainDescriptor swap_chain_desc{};
         swap_chain_desc.nextInChain = nullptr;
         swap_chain_desc.width = 640;
         swap_chain_desc.height = 480;
-#ifdef WEBGPU_BACKEND_WGPU
+// #ifdef WEBGPU_BACKEND_WGPU
         WGPUTextureFormat swapChainFormat = wgpuSurfaceGetPreferredFormat(surface, adapter);
-#else
-        WGPUTextureFormat swapChainFormat = WGPUTextureFormat_BGRA8Unorm;
-#endif
+// #else
+//         WGPUTextureFormat swapChainFormat = WGPUTextureFormat_BGRA8Unorm;
+// #endif
         cout << "swap chain format: " << swapChainFormat << endl;
         swap_chain_desc.format = swapChainFormat;
         swap_chain_desc.usage = WGPUTextureUsage_RenderAttachment;
@@ -420,15 +420,33 @@ namespace frieren_application {
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGuiWindowFlags root_window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_MenuBar
+                | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+            static bool p_open = true;
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f); // No corner rounding on the window
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f); // No border around the window
+            ImGui::Begin("Dockspace example", &p_open, root_window_flags);
+            ImGui::PopStyleVar(2);
+
+            ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
+            ImGui::DockSpace(dockspace_id);
+
             vector<shared_ptr<GameObject>> game_objects;
             for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
                 game_objects.push_back(go.second);
             }
+            ImGui::SetNextWindowDockID(dockspace_id);
             this->imgui_root.hierarchy_window.draw(game_objects);
             auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
             this->imgui_root.inspector_window.set_current_game_object(go);
             this->imgui_root.inspector_window.draw();
             this->imgui_root.scene_window.draw(scene_intermediate_texture->get_wgpu_texture_view(), 960, 600);
+            this->imgui_root.stats_window.draw();
 
             // ImGui::Begin("Scene");
             // ImGui::Image(scene_intermediate_texture->get_wgpu_texture_view(), ImVec2{
@@ -436,6 +454,8 @@ namespace frieren_application {
             //     600
             // });
             // ImGui::End();
+
+            ImGui::End();
 
             ImGui::Render();
             this->rendering_context.draw_imgui();
@@ -482,5 +502,9 @@ namespace frieren_application {
 
     void Instance::setup_imgui_window() {
         imgui_root.scene_window.camera_controller = &this->scene_camera_controller;
+
+        imgui_root.hierarchy_window.on_select_game_object = [&] (const string& new_id) {
+            this->imgui_root.hierarchy_window.selected_game_object_id = new_id;
+        };
     }
 }

@@ -34,6 +34,8 @@ namespace frieren_core {
         // void update_camera(PerspectiveCamera& camera) const;
 
         void move_camera_local(float dx, float dy);
+
+        void move_around(float dx, float dy);
     };
 }
 

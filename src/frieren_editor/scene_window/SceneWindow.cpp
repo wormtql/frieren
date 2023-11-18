@@ -37,6 +37,15 @@ namespace frieren_editor {
                         // cout << dx << ", " << dy << endl;
                         this->camera_controller->move_camera_local(dx, dy);
                     }
+
+                    dx = 0;
+                    dy = 0;
+                    dx += mouse_delta_x;
+                    dy += mouse_delta_y;
+                    float factor = 300;
+                    if (dx != 0 || dy != 0) {
+                        this->camera_controller->move_around(-dx / factor, -dy / factor);
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@
 #include "hierarchy/HierarchyWindow.h"
 #include "inspector/InspectorWindow.h"
 #include "scene_window/SceneWindow.h"
+#include "stats/StatsWindow.h"
 
 namespace frieren_editor {
     class ImGuiRoot {
@@ -14,6 +15,7 @@ namespace frieren_editor {
         HierarchyWindow hierarchy_window{};
         InspectorWindow inspector_window{};
         SceneWindow scene_window{};
+        StatsWindow stats_window{};
         // void draw()
     };
 }

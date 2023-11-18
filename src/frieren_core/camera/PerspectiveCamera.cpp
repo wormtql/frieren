@@ -45,6 +45,14 @@ namespace frieren_core {
         // cout << camera->get_view_matrix() << endl;
     }
 
+    void PerspectiveCameraController::move_around(float dx, float dy) {
+        glm::mat4x4 rotation_matrix2 = glm::eulerAngleXY(dy * rotation_speed, dx * rotation_speed);
+        auto rotation_matrix = camera->get_rotation_matrix();
+
+        glm::mat4x4 final_rotation_matrix = rotation_matrix * rotation_matrix2;
+        glm::extractEulerAngleXYZ(final_rotation_matrix, camera->rotation.x, camera->rotation.y, camera->rotation.z);
+    }
+
     // void PerspectiveCameraController::update_camera(PerspectiveCamera& camera) const {
     //     // this is the matrix convert from world axis to camera axis
     //     auto rotation_matrix = camera.get_rotation_matrix();

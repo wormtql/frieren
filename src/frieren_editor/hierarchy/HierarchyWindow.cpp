@@ -7,10 +7,32 @@ namespace frieren_editor {
     void HierarchyWindow::draw_node(shared_ptr<GameObject> go) {
         shared_ptr<Transform> transform = go->get_component<Transform>().value();
         const string& name = go->get_name();
+        const string& id = go->get_id();
+
+        ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth
+            | ImGuiTreeNodeFlags_SpanFullWidth;
+
+        if (selected_game_object_id.has_value() && selected_game_object_id.value() == id) {
+            node_flags |= ImGuiTreeNodeFlags_Selected;
+        }
+
         if (!transform->has_children()) {
-            ImGui::Text(name.c_str());
+            node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+            ImGui::TreeNodeEx(name.c_str(), node_flags);
+            // ImGui::Text(name.c_str());
+            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+                if (this->on_select_game_object.has_value()) {
+                    on_select_game_object.value()(id);
+                }
+            }
         } else {
-            if (ImGui::TreeNode(name.c_str())) {
+            bool node_open = ImGui::TreeNodeEx(name.c_str(), node_flags);
+            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+                if (on_select_game_object.has_value()) {
+                    on_select_game_object.value()(id);
+                }
+            }
+            if (node_open) {
                 for (const auto& c: transform->get_children()) {
                     draw_node(c.object->get_game_object().value());
                 }
@@ -35,19 +57,6 @@ namespace frieren_editor {
         for (auto go: all_roots) {
             draw_node(go);
         }
-
-        if (ImGui::IsWindowHovered()) {
-            if (ImGui::IsMousePosValid()) {
-                ImGui::Text("Mouse pos: (%g, %g)", io.MousePos.x, io.MousePos.y);
-            }
-            ImGui::Text("Mouse delta: (%g, %g)", io.MouseDelta.x, io.MouseDelta.y);
-            ImGui::Text("Mouse down:");
-            for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) if (ImGui::IsMouseDown(i)) { ImGui::SameLine(); ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]); }
-            ImGui::Text("Mouse wheel: %.1f", io.MouseWheel);
-        }
-        // ImGui::Hover
-        // ImGui::IsMouseDown(ImGuiMouseButton_Rig)
-        // ImGui::Image()
         
 
         ImGui::End();

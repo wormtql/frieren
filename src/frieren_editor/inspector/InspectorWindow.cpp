@@ -1,4 +1,5 @@
 #include "InspectorWindow.h"
+#include <imgui.h>
 
 namespace frieren_editor {
     InspectorWindow::InspectorWindow() {
@@ -18,8 +19,10 @@ namespace frieren_editor {
     }
 
     void InspectorWindow::draw() {
+        ImGui::Begin("Inspector", &show_window);
         for (const auto& inspector: this->editors) {
             inspector->draw();
         }
+        ImGui::End();
     }
 }
