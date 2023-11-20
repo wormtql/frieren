@@ -1,11 +1,8 @@
-//
-// Created by 58413 on 2023/10/16.
-//
-
-#include "Shader.h"
 #include "wgpu_serde.h"
+#include "Shader.h"
 #include <rendering/BuiltinBindGroupLayout.h>
 #include <mesh/Vertex.h>
+#include <utilities/utils.h>
 
 namespace frieren_core {
     void from_json(const json& j, ShaderDescriptor& shader_desc) {
@@ -36,7 +33,9 @@ namespace frieren_core {
     void from_json(const json& j, MyWGPUBindGroupLayoutEntry& e) {
         e.name = j["name"];
         e.binding = j["binding"];
-        e.visibility = j["visibility"].template get<WGPUShaderStageFlags>();
+        e.visibility = utils::from_json_flags<WGPUShaderStage>(j["visibility"]);
+        // from_json(j["visibility"], e.visibility);
+        // e.visibility = j["visibility"].template get<WGPUShaderStageFlags>();
 
         e.buffer.type = WGPUBufferBindingType_Undefined;
         e.sampler.type = WGPUSamplerBindingType_Undefined;

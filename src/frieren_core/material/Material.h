@@ -67,7 +67,7 @@ namespace frieren_core {
          */
         void set_uniform_buffer(WGPUQueue queue) const;
 
-        void use_material(WGPURenderPassEncoder render_pass) const;
+        void use_material(WGPUQueue queue, WGPURenderPassEncoder render_pass) const;
     };
 }
 

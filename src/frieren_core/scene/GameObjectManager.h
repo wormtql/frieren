@@ -16,7 +16,7 @@ namespace frieren_core {
 
         void remove_game_object(const string& name);
 
-        optional<shared_ptr<GameObject>> get_game_object(const string& name);
+        optional<shared_ptr<GameObject>> get_game_object(const string& id);
 
         // only used when deserializing things
         void add_game_object(shared_ptr<GameObject> go);

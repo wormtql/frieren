@@ -23,7 +23,14 @@ void from_json(const json& j, WGPUBindGroupLayoutEntry& e);
 
 void from_json(const json& j, WGPUBufferBindingLayout& buffer_binding_layout);
 
-void from_json(const json& j, WGPUBufferBindingType& buffer_binding_type);
+NLOHMANN_JSON_SERIALIZE_ENUM(WGPUBufferBindingType, {
+    {WGPUBufferBindingType_Undefined, "Undefined"},
+    {WGPUBufferBindingType_Uniform, "Uniform"},
+    {WGPUBufferBindingType_Storage, "Storage"},
+    {WGPUBufferBindingType_ReadOnlyStorage, "ReadOnlyStorage"}
+})
+
+// void from_json(const json& j, WGPUBufferBindingType& buffer_binding_type);
 
 void from_json(const json& j, WGPUSamplerBindingLayout& sampler_binding_layout);
 
@@ -139,7 +146,14 @@ struct WGPUSamplerDescriptorOwned {
 
 void from_json(const json& j, WGPUSamplerDescriptorOwned& desc);
 
-void from_json(const json& j, WGPUShaderStageFlags& flags);
+// void from_json(const json& j, WGPUShaderStage& flags);
+
+NLOHMANN_JSON_SERIALIZE_ENUM(WGPUShaderStage, {
+    {WGPUShaderStage_None, "None"},
+    {WGPUShaderStage_Vertex, "Vertex"},
+    {WGPUShaderStage_Fragment, "Fragment"},
+    {WGPUShaderStage_Compute, "Compute"}
+})
 
 NLOHMANN_JSON_SERIALIZE_ENUM(WGPUTextureDimension, {
     {WGPUTextureDimension_1D, "1D"},

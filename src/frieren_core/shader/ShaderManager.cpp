@@ -4,7 +4,7 @@
 
 #include <memory>
 #include <utilities/utils.h>
-#include <nlohmann/json.hpp>
+#include <common_include.h>
 #include "ShaderManager.h"
 
 using json = nlohmann::json;

@@ -1,0 +1,77 @@
+{
+    "name": "frieren.pbr",
+    "id": "frieren.pbr",
+    "shader_source_path": "pbr.wgsl",
+    "primitive_state": {
+        "topology": "TriangleList",
+        "strip_index_format": "Undefined",
+        "front_face": "CCW",
+        "cull_mode": "Back"
+    },
+    "depth_stencil_state": {
+        "format": "Depth24PlusStencil8",
+        "depth_write_enabled": true,
+        "depth_compare": "Less",
+        "stencil_front": {
+            "compare": "Less",
+            "fail_op": "Keep",
+            "depth_fail_op": "Keep",
+            "pass_op": "Keep"
+        },
+        "stencil_back": {
+            "compare": "Less",
+            "fail_op": "Keep",
+            "depth_fail_op": "Keep",
+            "pass_op": "Keep"
+        },
+        "stencil_read_mask": 0,
+        "stencil_write_mask": 0,
+        "depth_bias": 0,
+        "depth_bias_slope_scale": 0,
+        "depth_bias_clamp": 0
+    },
+    "color_target_states": [
+        {
+            "format": "BGRA8UnormSrgb",
+            "blend": {
+                "color": {
+                    "src_factor": "One",
+                    "dst_factor": "Zero",
+                    "operation": "Add"
+                },
+                "alpha": {
+                    "src_factor": "One",
+                    "dst_factor": "Zero",
+                    "operation": "Add"
+                }
+            },
+            "write_mask": "All"
+        }
+    ],
+    "multisample_state": {
+        "count": 1,
+        "alpha_to_coverage_enabled": false
+    },
+    "is_instancing": false,
+    "bind_entries": [
+        {
+            "binding": 0,
+            "visibility": ["Vertex", "Fragment"],
+            "name": "shader_properties",
+            "buffer": {
+                "type": "Uniform",
+                "has_dynamic_offset": false
+            }
+        }
+    ],
+    "shader_properties": [
+        {
+            "name": "f0",
+            "type": "Float3"
+        },
+        {
+            "name": "alpha",
+            "type": "Float1"
+        }
+    ]
+}

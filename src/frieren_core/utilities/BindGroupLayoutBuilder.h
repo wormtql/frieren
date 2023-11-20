@@ -14,9 +14,10 @@ namespace frieren_core {
     class BindGroupLayoutBuilder {
     private:
         vector<WGPUBindGroupLayoutEntry> entries;
+        string name;
 
     public:
-        BindGroupLayoutBuilder() = default;
+        BindGroupLayoutBuilder(const string& name);
 
         BindGroupLayoutBuilder& add_uniform_buffer(int binding);
         BindGroupLayoutBuilder& add_sampler(int binding, WGPUSamplerBindingType bindingType);

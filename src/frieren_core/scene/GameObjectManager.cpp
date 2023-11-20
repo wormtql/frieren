@@ -33,11 +33,11 @@ namespace frieren_core {
         // if it has children, don't do anything
     }
 
-    optional<shared_ptr<GameObject>> GameObjectManager::get_game_object(const string& name) {
-        if (game_objects.find(name) == game_objects.end()) {
+    optional<shared_ptr<GameObject>> GameObjectManager::get_game_object(const string& id) {
+        if (game_objects.find(id) == game_objects.end()) {
             return {};
         }
-        return game_objects[name];
+        return game_objects[id];
     }
 
     void GameObjectManager::add_game_object(shared_ptr<GameObject> go) {

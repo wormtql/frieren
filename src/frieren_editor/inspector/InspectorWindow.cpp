@@ -19,10 +19,12 @@ namespace frieren_editor {
     }
 
     void InspectorWindow::draw() {
-        ImGui::Begin("Inspector", &show_window);
-        for (const auto& inspector: this->editors) {
-            inspector->draw();
+        if (ImGui::Begin("Inspector", &show_window)) {
+            for (const auto& inspector: this->editors) {
+                inspector->draw();
+            }
+            ImGui::Text("%d", show_window);
+            ImGui::End();
         }
-        ImGui::End();
     }
 }

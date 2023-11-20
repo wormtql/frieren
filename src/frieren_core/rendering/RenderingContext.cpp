@@ -124,7 +124,7 @@ namespace frieren_core {
         this->builtin_bind_group.per_object_uniform.update_uniform_buffer(queue);
 
         WGPURenderPassEncoder render_pass_encoder = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass_desc);
-        material->use_material(render_pass_encoder);
+        material->use_material(queue, render_pass_encoder);
         // set builtin bind group
         wgpuRenderPassEncoderSetBindGroup(render_pass_encoder, 0, this->builtin_bind_group.bind_group, 0, nullptr);
 

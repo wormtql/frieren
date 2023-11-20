@@ -118,19 +118,6 @@ void from_json(const json& j, WGPUBufferBindingLayout& buffer_binding_layout) {
     buffer_binding_layout.minBindingSize = 0;
 }
 
-void from_json(const json& j, WGPUBufferBindingType& buffer_binding_type) {
-    string s = j.template get<string>();
-    if (s == "Uniform") {
-        buffer_binding_type = WGPUBufferBindingType_Uniform;
-    } else if (s == "Storage") {
-        buffer_binding_type = WGPUBufferBindingType_Storage;
-    } else if (s == "ReadOnlyStorage") {
-        buffer_binding_type = WGPUBufferBindingType_ReadOnlyStorage;
-    } else {
-        buffer_binding_type = WGPUBufferBindingType_Undefined;
-    }
-}
-
 void from_json(const json& j, WGPUSamplerBindingType& sampler_binding_type) {
     string s = j.template get<string>();
     if (s == "Filtering") {
@@ -315,29 +302,29 @@ void from_json(const json& j, WGPUSamplerDescriptorOwned& desc) {
     desc.maxAnisotropy = j["max_anisotropy"];
 }
 
-void from_json(const json& j, WGPUShaderStageFlags flags) {
-    auto serialize_str = [] (const json& j2) {
-        string s = j2.template get<string>();
-        if (s == "None") {
-            return WGPUShaderStage_None;
-        } else if (s == "Vertex") {
-            return WGPUShaderStage_Vertex;
-        } else if (s == "Fragment") {
-            return WGPUShaderStage_Fragment;
-        } else if (s == "Compute") {
-            return WGPUShaderStage_Compute;
-        } else {
-            assert(false);
-        }
-        return WGPUShaderStage_None;
-    };
+// void from_json(const json& j, WGPUShaderStage& flags) {
+//     auto serialize_str = [] (const json& j2) {
+//         string s = j2.template get<string>();
+//         if (s == "None") {
+//             return WGPUShaderStage_None;
+//         } else if (s == "Vertex") {
+//             return WGPUShaderStage_Vertex;
+//         } else if (s == "Fragment") {
+//             return WGPUShaderStage_Fragment;
+//         } else if (s == "Compute") {
+//             return WGPUShaderStage_Compute;
+//         } else {
+//             assert(false);
+//         }
+//         return WGPUShaderStage_None;
+//     };
 
-    if (j.is_string()) {
-        flags = serialize_str(j);
-    } else if (j.is_array()) {
-        flags = 0;
-        for (const auto& j2: j) {
-            flags = flags | serialize_str(j2);
-        }
-    }
-}
+//     if (j.is_string()) {
+//         flags = serialize_str(j);
+//     } else if (j.is_array()) {
+//         flags = 0;
+//         for (const auto& j2: j) {
+//             flags = flags | serialize_str(j2);
+//         }
+//     }
+// }

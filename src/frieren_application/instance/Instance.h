@@ -63,6 +63,7 @@ namespace frieren_application {
 
         // imgui states
         ImGuiRoot imgui_root{};
+        shared_ptr<GameObject> selected_game_object;
 
         // scene camera state
         shared_ptr<PerspectiveCamera> scene_camera;

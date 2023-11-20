@@ -53,6 +53,9 @@ namespace frieren_core {
             this->name_to_index[names[i]] = i;
         }
 
+        this->sizes.resize(len);
+        this->aligns.resize(len);
+
         align_of_struct = 0;
         for (int i = 0; i < len; i++) {
             sizes[i] = get_size(types[i]);
@@ -121,7 +124,7 @@ namespace frieren_core {
 namespace frieren_core {
     void from_json(const json& j, ShaderPropertyType& ty) {
         string s = j.template get<string>();
-        if (s == "Float") {
+        if (s == "Float" || s == "Float1") {
             ty = ShaderPropertyType::Float1;
         } else if (s == "Float2") {
             ty = ShaderPropertyType::Float2;

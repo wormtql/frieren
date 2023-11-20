@@ -399,8 +399,12 @@ namespace frieren_application {
             glm::mat4x4 view_matrix = this->scene_camera->get_view_matrix();
             glm::mat4x4 projection_matrix = this->scene_camera->get_projection_matrix();
             PerFrameUniform& per_frame_uniform = rendering_context.builtin_bind_group.per_frame_uniform;
-            per_frame_uniform.data.view_matrix = view_matrix;
-            per_frame_uniform.data.projection_matrix = projection_matrix;
+            per_frame_uniform.data.camera.world_space_camera_position = glm::vec4{this->scene_camera->position, 1.0f};
+            per_frame_uniform.data.camera.view_matrix = view_matrix;
+            per_frame_uniform.data.camera.projection_matrix = projection_matrix;
+            per_frame_uniform.data.light.light_intensity = { 1.0, 1.0, 1.0, 1.0 };
+            per_frame_uniform.data.light.light_position = { 3, 3, 3, 0 };
+            per_frame_uniform.data.light.orientation = { -1, -1, -1, 0 };
             per_frame_uniform.update_uniform_buffer(queue);
 
             // render scene
@@ -442,8 +446,8 @@ namespace frieren_application {
             }
             ImGui::SetNextWindowDockID(dockspace_id);
             this->imgui_root.hierarchy_window.draw(game_objects);
-            auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
-            this->imgui_root.inspector_window.set_current_game_object(go);
+            // auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
+            // this->imgui_root.inspector_window.set_current_game_object(go);
             this->imgui_root.inspector_window.draw();
             this->imgui_root.scene_window.draw(scene_intermediate_texture->get_wgpu_texture_view(), 960, 600);
             this->imgui_root.stats_window.draw();
@@ -505,6 +509,8 @@ namespace frieren_application {
 
         imgui_root.hierarchy_window.on_select_game_object = [&] (const string& new_id) {
             this->imgui_root.hierarchy_window.selected_game_object_id = new_id;
+            shared_ptr<GameObject> go = this->current_scene->game_object_manager.get_game_object(new_id).value();
+            this->imgui_root.inspector_window.set_current_game_object(go);
         };
     }
 }

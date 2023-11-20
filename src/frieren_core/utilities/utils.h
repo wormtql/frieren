@@ -31,6 +31,23 @@ namespace frieren_core {
         string get_json_object_any_key(const json& j);
 
         int get_wgpu_texture_format_pixel_size(WGPUTextureFormat format);
+
+        template<typename T>
+        uint32_t from_json_flags(const json& j) {
+            auto serialize_str = [] (const json& j2) -> T {
+                return j2.template get<T>();
+            };
+
+            uint32_t flags = 0;
+            if (j.is_string()) {
+                flags = serialize_str(j);
+            } else if (j.is_array()) {
+                for (const auto& j2: j) {
+                    flags = flags | serialize_str(j2);
+                }
+            }
+            return flags;
+        }
     }
 }
 

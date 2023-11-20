@@ -6,11 +6,14 @@ using std::vector;
 
 namespace frieren_core {
     WGPUBindGroupLayout get_builtin_bind_group_layout(WGPUDevice device) {
-        BindGroupLayoutBuilder builder{};
-        // transformation
+        BindGroupLayoutBuilder builder{"frieren_builtin_bind_group_layout"};
+        // per-object transformation
         builder.add_uniform_buffer(0);
-        // camera
+
+        // per-frame camera
         builder.add_uniform_buffer(1);
+        // per-frame lighting
+        builder.add_uniform_buffer(2);
         // todo add more bindings
 
         return builder.build(device);
@@ -37,8 +40,12 @@ namespace frieren_core {
         this->per_object_uniform.create_wgpu_buffer(device);
 
         BindGroupBuilder builder;
-        builder.add_whole_buffer(0, per_frame_uniform.get_buffer());
-        builder.add_whole_buffer(1, per_object_uniform.get_buffer());
+        builder.add_whole_buffer(0, per_object_uniform.get_buffer());
+
+        builder.add_uniform_buffer(1, per_frame_uniform.get_buffer(), 0, sizeof(PerFrameCameraData));
+        builder.add_uniform_buffer(2, per_frame_uniform.get_buffer(), offsetof(PerFrameUniformData, light), sizeof(PerFrameLightData));
+        // builder.add_whole_buffer(1, per_frame_uniform.get_buffer());
+        
         this->bind_group = builder.build(device, bind_group_layout);
     }
 }

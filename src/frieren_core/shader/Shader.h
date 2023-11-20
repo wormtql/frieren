@@ -1,10 +1,9 @@
-#ifndef FRIEREN_SHADER_H
-#define FRIEREN_SHADER_H
+#ifndef FRIEREN_CORE_SHADER_H
+#define FRIEREN_CORE_SHADER_H
 
 #include <common_include.h>
 #include <webgpu/webgpu.hpp>
 #include "ShaderProperty.h"
-#include <nlohmann/json.hpp>
 #include "wgpu_serde.h"
 
 using namespace std;
