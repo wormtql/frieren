@@ -1,7 +1,7 @@
 #ifndef FRIEREN_EDITOR_TRANSFORM_EDITOR_H
 #define FRIEREN_EDITOR_TRANSFORM_EDITOR_H
 
-#include "ComponentEditor.h"
+#include "../ComponentEditor.h"
 #include <components/all_components.h>
 #include <common_include.h>
 #include <common_include_glm.h>

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include <scene/GameObject.h>
 #include "ComponentEditor.h"
@@ -17,6 +18,7 @@ namespace frieren_editor {
     private:
         shared_ptr<GameObject> current_game_object;
         vector<shared_ptr<ComponentEditor>> editors;
+        vector<string> component_names;
 
         InspectorRegistry inspector_registry;
     public:

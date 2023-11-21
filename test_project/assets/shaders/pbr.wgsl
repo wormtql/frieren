@@ -74,14 +74,16 @@ fn lambda_ggx(a: f32) -> f32 {
     return (-1f + sqrt(temp)) / 2f;
 }
 
-fn smith_g1_ggx(m: vec3<f32>, view: vec3<f32>, alpha_g: f32) -> f32 {
+fn smith_g1_ggx(m: vec3<f32>, view: vec3<f32>, alpha_g: f32, normal: vec3<f32>) -> f32 {
     let temp: f32 = max(0f, dot(m, view));
+    let ns = max(0f, dot(normal, view));
+    // let a: f32 = ns / (alpha_g * sqrt(1.0f - ns * ns));
     let a: f32 = temp / (alpha_g * sqrt(1.0f - temp * temp));
     return temp / (1.0f + lambda_ggx(a));
 }
 
-fn smith_g2_ggx_simple(light: vec3<f32>, view: vec3<f32>, m: vec3<f32>, alpha_g: f32) -> f32 {
-    return smith_g1_ggx(m, view, alpha_g) * smith_g1_ggx(m, light, alpha_g);
+fn smith_g2_ggx_simple(light: vec3<f32>, view: vec3<f32>, m: vec3<f32>, alpha_g: f32, normal: vec3<f32>) -> f32 {
+    return smith_g1_ggx(m, view, alpha_g, normal) * smith_g1_ggx(m, light, alpha_g, normal);
 }
 
 fn smith_g2_height_field_with_denom(light: vec3<f32>, view: vec3<f32>, m: vec3<f32>, alpha_g: f32) -> f32 {
@@ -106,7 +108,7 @@ fn brdf(light: vec3<f32>, view: vec3<f32>, normal: vec3<f32>) -> vec3<f32> {
     // let f0: vec3<f32> = get_f0(shader_properties.refraction_index1, shader_properties.refraction_index2);
     let f0 = shader_properties.f0;
     let f: vec3<f32> = fresnel(half, light, f0);
-    let g2: f32 = smith_g2_ggx_simple(light, view, half, shader_properties.alpha);
+    let g2: f32 = smith_g2_ggx_simple(light, view, half, shader_properties.alpha, normal);
     // let g2: f32 = smith_g2_ggx_simple(light, view, normal, shader_properties.alpha);
     let d: f32 = ndf_ggx(half, normal, shader_properties.alpha);
 
@@ -120,24 +122,27 @@ fn brdf(light: vec3<f32>, view: vec3<f32>, normal: vec3<f32>) -> vec3<f32> {
     // return f0;
     // return vec3<f32>(d, 0f, 0f);
     // return f * d;
-    return f * d * g2;
+    // return f * d * g2;
     // return vec3<f32>(g2, 0f, 0f);
 
-    // // let diffuse_color = vec3<f32>(1.0, 0.4, 0.2);
+    let diffuse_albedo = vec3<f32>(1.0, 1.0, 1.0);
     // let diffuse_color = f0;
-    // let diffuse = (vec3<f32>(1f, 1f, 1f) - f) * diffuse_color / 3.14;
+    let diffuse_energy = vec3<f32>(1f, 1f, 1f) - f;
+    let diffuse = diffuse_energy * diffuse_albedo / 3.14;
 
-    // let nom: vec3<f32> = f * g2 * d;
-    // let nl = abs(dot(normal, light));
-    // let nv = abs(dot(normal, view));
+    let nom: vec3<f32> = f * g2 * d;
+    let nl = abs(dot(normal, light));
+    let nv = abs(dot(normal, view));
     // let specular = nom / (4.0f * nl * nv + 0.001);
-    // // let specular = f * d * g2_with_denom;
+    let specular = f * d * g2_with_denom;
 
-    // // return vec3<f32>(nv, 0f, 0f);
-    // // return vec3<f32>(nv * nl * 4f, 0f, 0f);
-    // return specular;
-    // // return vec3<f32>(g2, 0f, 0f);
-    // // return specular + diffuse;
+    // return vec3<f32>(nv, 0f, 0f);
+    // return vec3<f32>(nv * nl * 4f, 0f, 0f);
+    return specular;
+    // return vec3<f32>(g2, 0f, 0f);
+    // return specular + diffuse;
+    // return diffuse;
+    // return vec3<f32>(1f, 1f, 1f) - f;
 }
 
 @vertex
@@ -146,7 +151,7 @@ fn vs_main(
     // @builtin(vertex_index) in_vertex_index: u32,
 ) -> VertexOutput {
     var out: VertexOutput;
-    out.clip_position = camera.projection_matrix * camera.view_matrix * vec4<f32>(model.position, 1.0);
+    out.clip_position = camera.projection_matrix * camera.view_matrix * transform.model_matrix * vec4<f32>(model.position, 1.0);
     // out.clip_position = camera.view_matrix * vec4<f32>(model.position, 1.0);
     // out.color = model.position * 0.5 + 0.5;
     // out.color = model.tangent * 0.5 + 0.5;

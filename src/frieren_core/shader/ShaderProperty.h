@@ -13,6 +13,7 @@ namespace frieren_core {
         Float3,
         Float2,
         Float1,
+        Color3,
         Uint32,
         Mat4x4,
     };
@@ -34,6 +35,13 @@ namespace frieren_core {
     struct ShaderProperty {
         ShaderPropertyType ty;
         ShaderPropertyValue value;
+
+        ShaderProperty(ShaderPropertyType ty, ShaderPropertyValue value): ty(ty), value(value) {}
+        ShaderProperty() = default;
+        ShaderProperty(float value);
+        ShaderProperty(glm::vec2 value);
+        ShaderProperty(glm::vec3 value);
+        ShaderProperty(glm::vec4 value);
     };
 
     class ShaderPropertyLayout {

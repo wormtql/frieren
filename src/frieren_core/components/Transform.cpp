@@ -32,7 +32,7 @@ namespace frieren_core::component {
     }
 
     glm::mat4x4 Transform::get_transform_matrix_local() const {
-        glm::mat4x4 ret;
+        glm::mat4x4 ret{1.0f};
         ret = ret * this->scale;
         ret = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z) * ret;
         ret = glm::translate(ret, this->position);

@@ -25,7 +25,7 @@ namespace frieren_core {
     void from_json(const json& j, MaterialDescriptor& desc);
 
     class Material {
-    private:
+    public:
         shared_ptr<Shader> shader;
         map<string, ShaderProperty> shader_properties;
         map<string, shared_ptr<Texture>> shader_textures;

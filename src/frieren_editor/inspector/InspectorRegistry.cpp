@@ -5,6 +5,8 @@
 namespace frieren_editor {
     void InspectorRegistry::init() {
         add_registry<Transform, TransformEditor>();
+        add_registry<MeshFilter, MeshFilterEditor>();
+        add_registry<MeshRenderer, MeshRendererEditor>();
     }
 
     shared_ptr<ComponentEditor> InspectorRegistry::create_inspector(const string& component_type_name, shared_ptr<Component> c) {

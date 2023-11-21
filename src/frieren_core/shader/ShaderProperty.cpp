@@ -7,7 +7,7 @@ namespace frieren_core {
             return 4;
         } else if (ty == ShaderPropertyType::Float2) {
             return 8;
-        } else if (ty == ShaderPropertyType::Float3) {
+        } else if (ty == ShaderPropertyType::Float3 || ty == ShaderPropertyType::Color3) {
             return 12;
         } else if (ty == ShaderPropertyType::Float4) {
             return 16;
@@ -24,7 +24,7 @@ namespace frieren_core {
             return 4;
         } else if (ty == ShaderPropertyType::Float2) {
             return 8;
-        } else if (ty == ShaderPropertyType::Float3) {
+        } else if (ty == ShaderPropertyType::Float3 || ty == ShaderPropertyType::Color3) {
             return 16;
         } else if (ty == ShaderPropertyType::Float4) {
             return 16;
@@ -118,6 +118,26 @@ namespace frieren_core {
     const std::vector<string>& ShaderPropertyLayout::get_names() const {
         return names;
     }
+
+    ShaderProperty::ShaderProperty(float value) {
+        this->ty = ShaderPropertyType::Float1;
+        this->value.float_value = value;
+    }
+
+    ShaderProperty::ShaderProperty(glm::vec2 value) {
+        ty = ShaderPropertyType::Float2;
+        this->value.float2_value = value;
+    }
+
+    ShaderProperty::ShaderProperty(glm::vec3 value) {
+        ty = ShaderPropertyType::Float3;
+        this->value.float3_value = value;
+    }
+
+    ShaderProperty::ShaderProperty(glm::vec4 value) {
+        ty = ShaderPropertyType::Float4;
+        this->value.float4_value = value;
+    }
 }
 
 // serde
@@ -136,6 +156,8 @@ namespace frieren_core {
             ty = ShaderPropertyType::Uint32;
         } else if (s == "Mat4x4") {
             ty = ShaderPropertyType::Mat4x4;
+        } else if (s == "Color3") {
+            ty = ShaderPropertyType::Color3;
         }
     }
 
@@ -149,7 +171,7 @@ namespace frieren_core {
         } else if (ty == ShaderPropertyType::Float2) {
             glm::vec2 f = j["value"].template get<glm::vec2>();
             prop.value.float2_value = f;
-        } else if (ty == ShaderPropertyType::Float3) {
+        } else if (ty == ShaderPropertyType::Float3 || ty == ShaderPropertyType::Color3) {
             prop.value.float3_value = j["value"].template get<glm::vec3>();
         } else if (ty == ShaderPropertyType::Float4) {
             prop.value.float4_value = j["value"].template get<glm::vec4>();

@@ -3,21 +3,13 @@
     "id": "SimplePBR",
     "shader_id": "frieren.pbr",
     "properties": {
-        "refraction_index1": {
-            "type": "Float3",
-            "value": [1, 1, 1]
-        },
-        "refraction_index2": {
-            "type": "Float3",
-            "value": [1.33, 1.33, 1.33]
-        },
         "f0": {
-            "type": "Float3",
+            "type": "Color3",
             "value": [1, 0.782, 0.344]
         },
         "alpha": {
             "type": "Float",
-            "value": 0.5
+            "value": 0.1
         }
     },
     "textures": {},

@@ -56,7 +56,10 @@ namespace frieren_core {
         for (int i = 0; i < mesh_renderers.size(); i++) {
             shared_ptr<MeshFilter> mesh_filter = mesh_renderers[i]->get_component<MeshFilter>().value();
             shared_ptr<MeshRenderer> mesh_renderer = mesh_renderers[i];
-            rendering_context.draw_mesh(mesh_filter->get_mesh(), glm::mat4x4{1.0f}, mesh_renderer->get_materials()[0].object);
+            shared_ptr<Transform> transform = mesh_renderers[i]->get_component<Transform>().value();
+            glm::mat4x4 model_matrix = transform->get_transform_matrix();
+            // rendering_context.draw_mesh(mesh_filter->get_mesh(), glm::mat4x4{1.0f}, mesh_renderer->get_materials()[0].object);
+            rendering_context.draw_mesh(mesh_filter->get_mesh(), model_matrix, mesh_renderer->get_materials()[0].object);
         }
     }
 }
