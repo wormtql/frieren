@@ -1,0 +1,14 @@
+{
+    "name": "simple_sampler",
+    "id": "simple_sampler",
+    "address_mode_u": "ClampToEdge",
+    "address_mode_v": "ClampToEdge",
+    "address_mode_w": "ClampToEdge",
+    "mag_filter": "Linear",
+    "min_filter": "Linear",
+    "mipmap_filter": "Linear",
+    "lod_min_clamp": 0,
+    "lod_max_clamp": 0,
+    "compare": "Undefined",
+    "max_anisotropy": 1
+}

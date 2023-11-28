@@ -4,6 +4,7 @@
 namespace frieren_core {
     void from_json(const json& j, SamplerDescriptor& desc) {
         desc.name = j["name"];
+        desc.id = j["id"];
         desc.addressModeU = j["address_mode_u"].template get<WGPUAddressMode>();
         desc.addressModeV = j["address_mode_v"].template get<WGPUAddressMode>();
         desc.addressModeW = j["address_mode_w"].template get<WGPUAddressMode>();

@@ -12,7 +12,7 @@ namespace frieren_core {
             json j = json::parse(sampler_desc_json);
 
             SamplerDescriptor desc = j.template get<SamplerDescriptor>();
-            loaded_sampler_descriptors[desc.name] = desc;
+            loaded_sampler_descriptors[desc.id] = desc;
         }
     }
 
@@ -31,18 +31,18 @@ namespace frieren_core {
         }
     }
 
-    optional<shared_ptr<Sampler>> SamplerManager::get_sampler(WGPUDevice device, const string& name) {
-        if (loaded_samplers.find(name) != loaded_samplers.end()) {
-            return loaded_samplers[name];
+    optional<shared_ptr<Sampler>> SamplerManager::get_sampler(WGPUDevice device, const string& id) {
+        if (loaded_samplers.find(id) != loaded_samplers.end()) {
+            return loaded_samplers[id];
         }
 
-        if (loaded_sampler_descriptors.find(name) == loaded_sampler_descriptors.end()) {
+        if (loaded_sampler_descriptors.find(id) == loaded_sampler_descriptors.end()) {
             return {};
         }
 
-        const auto& desc = loaded_sampler_descriptors[name];
+        const auto& desc = loaded_sampler_descriptors[id];
         shared_ptr<Sampler> sampler = make_shared<Sampler>(device, desc);
-        loaded_samplers[name] = sampler;
+        loaded_samplers[id] = sampler;
 
         return sampler;
     }

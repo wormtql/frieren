@@ -3,6 +3,7 @@
 #include <nanoid/nanoid.h>
 #include <wgpu_serde.h>
 #include <utilities/utils.h>
+#include "MyTextureFormat.h"
 
 namespace frieren_core {
     Texture::Texture(WGPUTexture texture, WGPUTextureView texture_view)
@@ -88,7 +89,8 @@ namespace frieren_core {
                 assert(false);
             }
 
-            this->cpu_data = img;
+            this->cpu_data.assign(img, img + width * height * channels);
+//            this->cpu_data = img;
             // assume each channel takes 1 byte
             this->pixel_size = channels;
 
@@ -97,7 +99,17 @@ namespace frieren_core {
                 .height = static_cast<unsigned int>(height),
                 .depthOrArrayLayers = 1
             };
-        } else {
+        } else if (ext == ".frieren_texture") {
+            MyTextureFormatData data = MyTextureFormat::read_texture(path).value();
+            this->cpu_data.assign(data.data.begin(), data.data.end());
+            this->pixel_size = data.header.pixel_bytes;
+            wgpu_texture_desc.size = WGPUExtent3D {
+                .width = static_cast<unsigned int>(data.header.width),
+                .height = static_cast<unsigned int>(data.header.height),
+                .depthOrArrayLayers = static_cast<unsigned int>(data.header.depth)
+            };
+        }
+        else {
             assert(false);
         }
 
@@ -127,7 +139,6 @@ namespace frieren_core {
         this->texture = other.texture;
         this->texture_view = other.texture_view;
 
-        other.cpu_data = nullptr;
         other.texture = nullptr;
         other.texture_view = nullptr;
     }
@@ -141,11 +152,6 @@ namespace frieren_core {
             wgpuTextureDestroy(this->texture);
             wgpuTextureRelease(this->texture);
             this->texture = nullptr;
-        }
-
-        if (this->cpu_data != nullptr) {
-            stbi_image_free(this->cpu_data);
-            cpu_data = nullptr;
         }
     }
 
@@ -168,7 +174,7 @@ namespace frieren_core {
         source.rowsPerImage = texture_size.height;
 
         int image_size = texture_size.height * texture_size.width * texture_size.depthOrArrayLayers * pixel_size;
-        wgpuQueueWriteTexture(queue, &dest, this->cpu_data, image_size, &source, &texture_size);
+        wgpuQueueWriteTexture(queue, &dest, this->cpu_data.data(), image_size, &source, &texture_size);
     }
 
     Texture Texture::create_depth_stencil_texture(WGPUDevice device, WGPUTextureFormat format, const string &name,

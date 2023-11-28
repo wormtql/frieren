@@ -1,0 +1,5 @@
+add_executable(directional_albedo directional_albedo.cpp)
+target_link_libraries(directional_albedo frieren_precompute)
+
+add_executable(determine_stbi_direction determine_stbi_direction.cpp)
+target_link_libraries(determine_stbi_direction frieren_precompute)

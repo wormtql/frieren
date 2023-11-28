@@ -1,0 +1,9 @@
+{
+    "name": "r_sf1_bar_lut",
+    "id": "r_sf1_bar_lut",
+    "texture_data_path": "r_sf1_bar.frieren_texture",
+    "dimension": "1D",
+    "texture_view_dimension": "1D",
+    "format": "R8Unorm",
+    "mip_level_count": 1
+}

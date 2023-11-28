@@ -9,6 +9,7 @@ using namespace std;
 namespace frieren_core {
     struct SamplerDescriptor {
         string name;
+        string id;
         WGPUAddressMode addressModeU;
         WGPUAddressMode addressModeV;
         WGPUAddressMode addressModeW;

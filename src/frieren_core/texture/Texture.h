@@ -24,7 +24,8 @@ namespace frieren_core {
         static set<string> texture_ext_stbi;
 
         string id;
-        void* cpu_data = nullptr;
+        vector<uint8_t> cpu_data;
+//        void* cpu_data = nullptr;
         WGPUExtent3D texture_size{};
         /**
          * how many bytes a pixel takes.

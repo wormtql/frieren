@@ -28,3 +28,6 @@
 [submodule "3rd/assimp"]
 	path = 3rd/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "3rd/OpenImageIO"]
+	path = 3rd/OpenImageIO
+	url = https://github.com/AcademySoftwareFoundation/OpenImageIO.git

@@ -62,6 +62,34 @@
                 "type": "Uniform",
                 "has_dynamic_offset": false
             }
+        },
+        {
+            "binding": 1,
+            "visibility": ["Fragment"],
+            "name": "r_sf1_lut",
+            "texture": {
+                "sample_type": "Float",
+                "view_dimension": "2D",
+                "multisampled": false
+            }
+        },
+        {
+            "binding": 2,
+            "visibility": ["Fragment"],
+            "name": "r_sf1_lut_sampler",
+            "sampler": {
+                "type": "Filtering"
+            }
+        },
+        {
+            "binding": 3,
+            "visibility": ["Fragment"],
+            "name": "r_sf1_bar_lut",
+            "texture": {
+                "sample_type": "Float",
+                "view_dimension": "1D",
+                "multisampled": false
+            }
         }
     ],
     "shader_properties": [

@@ -24,7 +24,7 @@ namespace frieren_core {
 
         void init_all_sampler_descriptors();
 
-        optional<shared_ptr<Sampler>> get_sampler(WGPUDevice device, const string& name);
+        optional<shared_ptr<Sampler>> get_sampler(WGPUDevice device, const string& id);
     };
 }
 

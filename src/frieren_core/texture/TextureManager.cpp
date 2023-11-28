@@ -27,7 +27,12 @@ namespace frieren_core {
             json j = json::parse(texture_descriptor_json);
 
             TextureDescriptor texture_descriptor = j.template get<TextureDescriptor>();
-            loaded_texture_descriptors[texture_descriptor.name] = texture_descriptor;
+
+            filesystem::path parent = path.parent_path();
+            filesystem::path texture_data_path = parent / texture_descriptor.texture_data_path;
+            texture_descriptor.texture_data_path = filesystem::absolute(texture_data_path).string();
+
+            loaded_texture_descriptors[texture_descriptor.id] = texture_descriptor;
         }
     }
 

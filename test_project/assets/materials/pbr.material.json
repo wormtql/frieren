@@ -9,9 +9,14 @@
         },
         "alpha": {
             "type": "Float",
-            "value": 0.1
+            "value": 0.9
         }
     },
-    "textures": {},
-    "samplers": {}
+    "textures": {
+        "r_sf1_lut": "r_sf1_lut",
+        "r_sf1_bar_lut": "r_sf1_bar_lut"
+    },
+    "samplers": {
+        "r_sf1_lut_sampler": "simple_sampler"
+    }
 }
