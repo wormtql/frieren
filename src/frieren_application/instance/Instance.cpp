@@ -5,6 +5,7 @@
 #include <utilities/utils.h>
 
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <backends/imgui_impl_wgpu.h>
 #include <backends/imgui_impl_glfw.h>
 
@@ -434,30 +435,25 @@ namespace frieren_application {
             static bool p_open = true;
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f); // No corner rounding on the window
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f); // No border around the window
+
             ImGui::Begin("Dockspace example", &p_open, root_window_flags);
             ImGui::PopStyleVar(2);
 
-            ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-            ImGui::DockSpace(dockspace_id);
+
+            build_dock_node();
+//            ImGui::DockSpaceOverViewport(viewport);
+//            ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
+//            ImGui::DockSpace(dockspace_id);
 
             vector<shared_ptr<GameObject>> game_objects;
             for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
                 game_objects.push_back(go.second);
             }
-            ImGui::SetNextWindowDockID(dockspace_id);
+//            ImGui::SetNextWindowDockID(dockspace_id);
             this->imgui_root.hierarchy_window.draw(game_objects);
-            // auto go = current_scene->game_object_manager.get_game_objects().begin()->second;
-            // this->imgui_root.inspector_window.set_current_game_object(go);
             this->imgui_root.inspector_window.draw();
             this->imgui_root.scene_window.draw(scene_intermediate_texture->get_wgpu_texture_view(), 960, 600);
             this->imgui_root.stats_window.draw();
-
-            // ImGui::Begin("Scene");
-            // ImGui::Image(scene_intermediate_texture->get_wgpu_texture_view(), ImVec2{
-            //     960,
-            //     600
-            // });
-            // ImGui::End();
 
             ImGui::End();
 
@@ -466,6 +462,42 @@ namespace frieren_application {
 
             wgpuTextureViewRelease(next_texture);
             wgpuSwapChainPresent(swap_chain);
+        }
+    }
+
+    void Instance::build_dock_node() {
+        static bool first_time = true;
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+//        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGuiID root_id = ImGui::GetID("RootNode");
+        ImGui::DockSpace(root_id);
+
+        if (first_time) {
+//            ImGuiID root_id = ImGui::GetID("RootDockspaceNode");
+
+            ImGui::DockBuilderRemoveNode(root_id);
+            ImGui::DockBuilderAddNode(root_id);
+
+//            ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->WorkSize);
+//            ImGui::DockBuilderSetNodePos(dockspace_id, ImVec2 {0, 0});
+
+//            ImGuiID id = ImGui::DockSpaceOverViewport(viewport);
+
+            ImGuiID right_id;
+            ImGuiID left_id = ImGui::DockBuilderSplitNode(root_id, ImGuiDir_Left, 0.2, nullptr, &right_id);
+            ImGuiID statistics_id;
+            ImGuiID hierarchy_id = ImGui::DockBuilderSplitNode(left_id, ImGuiDir_Up, 0.7, nullptr, &statistics_id);
+
+            ImGuiID inspector_id;
+            ImGuiID scene_id = ImGui::DockBuilderSplitNode(right_id, ImGuiDir_Left, 0.6, nullptr, &inspector_id);
+
+            ImGui::DockBuilderDockWindow("SceneWindow", scene_id);
+            ImGui::DockBuilderDockWindow("HierarchyWindow", hierarchy_id);
+            ImGui::DockBuilderDockWindow("StatisticsWindow", statistics_id);
+            ImGui::DockBuilderDockWindow("InspectorWindow", inspector_id);
+
+            first_time = false;
         }
     }
 

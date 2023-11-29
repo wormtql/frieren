@@ -7,9 +7,9 @@ namespace frieren_editor {
 
         float delta_time = io.DeltaTime;
 
-        ImGui::Begin("Stats", &window_open);
-
-        ImGui::Text("frame rate: %.2f", 1.0f / delta_time);
+        if (ImGui::Begin("StatisticsWindow", &window_open)) {
+            ImGui::Text("frame rate: %.2f", 1.0f / delta_time);
+        }
 
         ImGui::End();
     }

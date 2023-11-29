@@ -5,7 +5,7 @@ namespace frieren_editor {
     void SceneWindow::draw(WGPUTextureView texture_view, int width, int height) {
         ImGuiIO& io = ImGui::GetIO();
 
-        ImGui::Begin("Scene", &show_window);
+        ImGui::Begin("SceneWindow", &show_window);
 
         ImGui::Image(texture_view, ImVec2{
             (float)width,

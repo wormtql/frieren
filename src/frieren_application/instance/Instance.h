@@ -93,6 +93,8 @@ namespace frieren_application {
         void setup_camera();
 
         void setup_imgui_window();
+
+        void build_dock_node();
     public:
         // Instance();
         explicit Instance(const filesystem::path& path);

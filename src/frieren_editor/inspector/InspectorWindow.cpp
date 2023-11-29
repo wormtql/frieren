@@ -21,14 +21,14 @@ namespace frieren_editor {
     }
 
     void InspectorWindow::draw() {
-        if (ImGui::Begin("Inspector", &show_window)) {
+        if (ImGui::Begin("InspectorWindow", &show_window)) {
             for (int i = 0; i < editors.size(); i++) {
                 const string& name = component_names[i];
                 if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_None)) {
                     editors[i]->draw();
                 }
             }
-            ImGui::End();
         }
+        ImGui::End();
     }
 }

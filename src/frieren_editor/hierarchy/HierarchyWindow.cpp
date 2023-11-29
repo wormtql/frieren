@@ -44,20 +44,19 @@ namespace frieren_editor {
     void HierarchyWindow::draw(const vector<shared_ptr<GameObject>> &objects) {
         ImGuiIO& io = ImGui::GetIO();
 
-        ImGui::Begin("Hierarchy", &show_window);
+        if (ImGui::Begin("HierarchyWindow", &show_window)) {
+            vector<shared_ptr<GameObject>> all_roots;
 
-        vector<shared_ptr<GameObject>> all_roots;
+            for (int i = 0; i < objects.size(); i++) {
+                if (!objects[i]->has_parent()) {
+                    all_roots.push_back(objects[i]);
+                }
+            }
 
-        for (int i = 0; i < objects.size(); i++) {
-            if (!objects[i]->has_parent()) {
-                all_roots.push_back(objects[i]);
+            for (auto go: all_roots) {
+                draw_node(go);
             }
         }
-
-        for (auto go: all_roots) {
-            draw_node(go);
-        }
-        
 
         ImGui::End();
     }
