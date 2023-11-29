@@ -1,3 +1,7 @@
 add_executable(test1 test1.cpp)
 target_link_libraries(test1 frieren_core frieren_application)
 target_copy_webgpu_binaries(test1)
+
+add_executable(simple_imgui_instance simple_imgui_instance.cpp)
+target_link_libraries(simple_imgui_instance frieren_core frieren_application)
+target_copy_webgpu_binaries(simple_imgui_instance)

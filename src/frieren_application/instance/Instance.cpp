@@ -380,85 +380,91 @@ namespace frieren_application {
             glfwGetFramebufferSize(this->window, &width, &height);
 
             if (width != swap_chain_desc.width || height != swap_chain_desc.height) {
-//                ImGui_ImplWGPU_InvalidateDeviceObjects();
+                ImGui_ImplWGPU_InvalidateDeviceObjects();
                 if (swap_chain) {
                     wgpuSwapChainRelease(swap_chain);
                 }
+                cout << "(" << width << ", " << height << ")" << endl;
                 swap_chain_desc.width = width;
                 swap_chain_desc.height = height;
                 swap_chain = wgpuDeviceCreateSwapChain(device, surface, &swap_chain_desc);
-//                ImGui_ImplWGPU_CreateDeviceObjects();
+                ImGui_ImplWGPU_CreateDeviceObjects();
             }
 
             WGPUTextureView next_texture = wgpuSwapChainGetCurrentTextureView(swap_chain);
             if (!next_texture) {
                 std::cerr << "Cannot acquire next swap chain texture" << std::endl;
-                break;
+//                break;
+                continue;
             }
 
             // setup per frame uniform
-            glm::mat4x4 view_matrix = this->scene_camera->get_view_matrix();
-            glm::mat4x4 projection_matrix = this->scene_camera->get_projection_matrix();
-            PerFrameUniform& per_frame_uniform = rendering_context.builtin_bind_group.per_frame_uniform;
-            per_frame_uniform.data.camera.world_space_camera_position = glm::vec4{this->scene_camera->position, 1.0f};
-            per_frame_uniform.data.camera.view_matrix = view_matrix;
-            per_frame_uniform.data.camera.projection_matrix = projection_matrix;
-            per_frame_uniform.data.light.light_intensity = { 1.0, 1.0, 1.0, 1.0 };
-            per_frame_uniform.data.light.light_position = { 3, 3, 3, 0 };
-            per_frame_uniform.data.light.orientation = { -1, -1, -1, 0 };
-            per_frame_uniform.update_uniform_buffer(queue);
+//            glm::mat4x4 view_matrix = this->scene_camera->get_view_matrix();
+//            glm::mat4x4 projection_matrix = this->scene_camera->get_projection_matrix();
+//            PerFrameUniform& per_frame_uniform = rendering_context.builtin_bind_group.per_frame_uniform;
+//            per_frame_uniform.data.camera.world_space_camera_position = glm::vec4{this->scene_camera->position, 1.0f};
+//            per_frame_uniform.data.camera.view_matrix = view_matrix;
+//            per_frame_uniform.data.camera.projection_matrix = projection_matrix;
+//            per_frame_uniform.data.light.light_intensity = { 1.0, 1.0, 1.0, 1.0 };
+//            per_frame_uniform.data.light.light_position = { 3, 3, 3, 0 };
+//            per_frame_uniform.data.light.orientation = { -1, -1, -1, 0 };
+//            per_frame_uniform.update_uniform_buffer(queue);
 
             // render scene
-            this->rendering_context.set_surface_texture_view(
-                this->scene_intermediate_texture->get_wgpu_texture_view(),
-                // next_texture,
-                960, 600,
-                swap_chain_desc.format
-            );
-            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
-                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
-            }
+//            this->rendering_context.set_surface_texture_view(
+//                    next_texture,
+//                    swap_chain_desc.width, swap_chain_desc.height,
+//                    swap_chain_desc.format
+//            );
+//            this->rendering_context.set_surface_texture_view(
+//                this->scene_intermediate_texture->get_wgpu_texture_view(),
+//                // next_texture,
+//                960, 600,
+//                swap_chain_desc.format
+//            );
+//            if (this->render_pipeline != nullptr && this->current_scene != nullptr) {
+//                this->render_pipeline->render_scene(*this->current_scene, this->rendering_context);
+//            }
 
             // render UI
-            this->rendering_context.set_surface_texture_view(next_texture, swap_chain_desc.width, swap_chain_desc.height, this->swap_chain_desc.format);
-            ImGui_ImplWGPU_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+            bool render_ui = true;
+            if (render_ui) {
+                this->rendering_context.set_surface_texture_view(next_texture, swap_chain_desc.width, swap_chain_desc.height, this->swap_chain_desc.format);
+                ImGui_ImplWGPU_NewFrame();
+                ImGui_ImplGlfw_NewFrame();
+                ImGui::NewFrame();
 
-            const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-            ImGuiWindowFlags root_window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_MenuBar
-                | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
-                | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-            static bool p_open = true;
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f); // No corner rounding on the window
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f); // No border around the window
+                const ImGuiViewport* viewport = ImGui::GetMainViewport();
+                ImGui::SetNextWindowPos(viewport->WorkPos);
+                ImGui::SetNextWindowSize(viewport->WorkSize);
+                ImGui::SetNextWindowViewport(viewport->ID);
+                ImGuiWindowFlags root_window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_MenuBar
+                                                     | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+                                                     | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+                static bool p_open = true;
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f); // No corner rounding on the window
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f); // No border around the window
 
-            ImGui::Begin("Dockspace example", &p_open, root_window_flags);
-            ImGui::PopStyleVar(2);
+                ImGui::Begin("Dockspace example", &p_open, root_window_flags);
+                ImGui::PopStyleVar(2);
 
+                build_dock_node();
 
-            build_dock_node();
-//            ImGui::DockSpaceOverViewport(viewport);
-//            ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-//            ImGui::DockSpace(dockspace_id);
+                vector<shared_ptr<GameObject>> game_objects;
+                for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
+                    game_objects.push_back(go.second);
+                }
+//                this->imgui_root.hierarchy_window.draw(game_objects);
+//                this->imgui_root.inspector_window.draw();
+//                this->imgui_root.scene_window.draw(scene_intermediate_texture->get_wgpu_texture_view(), 960, 600);
+//                this->imgui_root.stats_window.draw();
+                ImGui::Text("123");
 
-            vector<shared_ptr<GameObject>> game_objects;
-            for (const auto& go: current_scene->game_object_manager.get_game_objects()) {
-                game_objects.push_back(go.second);
+                ImGui::End();
+
+                ImGui::Render();
+                this->rendering_context.draw_imgui();
             }
-//            ImGui::SetNextWindowDockID(dockspace_id);
-            this->imgui_root.hierarchy_window.draw(game_objects);
-            this->imgui_root.inspector_window.draw();
-            this->imgui_root.scene_window.draw(scene_intermediate_texture->get_wgpu_texture_view(), 960, 600);
-            this->imgui_root.stats_window.draw();
-
-            ImGui::End();
-
-            ImGui::Render();
-            this->rendering_context.draw_imgui();
 
             wgpuTextureViewRelease(next_texture);
             wgpuSwapChainPresent(swap_chain);

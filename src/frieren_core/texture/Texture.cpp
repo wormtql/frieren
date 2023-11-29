@@ -119,7 +119,8 @@ namespace frieren_core {
 
         WGPUTextureViewDescriptor texture_view_desc{};
         texture_view_desc.nextInChain = nullptr;
-        texture_view_desc.label = (texture_desc.name + "_view").c_str();
+        string view_name = texture_desc.name + "_view";
+        texture_view_desc.label = view_name.c_str();
         texture_view_desc.format = texture_desc.format;
         texture_view_desc.dimension = texture_desc.texture_view_dimension;
         texture_view_desc.baseMipLevel = 0;

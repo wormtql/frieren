@@ -160,58 +160,59 @@ namespace frieren_core {
     }
 
     void RenderingContext::draw_imgui() {
-        wgpu::RenderPassColorAttachment color_attachments{};
-        color_attachments.loadOp = wgpu::LoadOp::Load;
-        color_attachments.storeOp = wgpu::StoreOp::Store;
-        color_attachments.view = surface_texture_view.value();
+//        wgpu::RenderPassColorAttachment color_attachments{};
+//        color_attachments.loadOp = wgpu::LoadOp::Load;
+//        color_attachments.storeOp = wgpu::StoreOp::Store;
+//        color_attachments.view = surface_texture_view.value();
+//
+//        wgpu::RenderPassDescriptor render_pass_desc{};
+//        render_pass_desc.colorAttachmentCount = 1;
+//        render_pass_desc.colorAttachments = &color_attachments;
+//        render_pass_desc.depthStencilAttachment = nullptr;
+//
+//        wgpu::CommandEncoderDescriptor enc_desc{};
+//        enc_desc.label = "Draw ImGui";
+//        wgpu::CommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, &enc_desc);
+//
+//        wgpu::RenderPassEncoder pass = encoder.beginRenderPass(render_pass_desc);
+//        ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), pass);
+//        pass.end();
+//
+//        wgpu::CommandBufferDescriptor cmd_buffer_desc{};
+//        wgpu::CommandBuffer cmd_buffer = encoder.finish(cmd_buffer_desc);
+//
+//        wgpuQueueSubmit(queue, 1, reinterpret_cast<const WGPUCommandBuffer*>(&cmd_buffer));
+//
+//        cmd_buffer.release();
+//        pass.release();
+//        encoder.release();
+        
 
-        wgpu::RenderPassDescriptor render_pass_desc{};
+        WGPURenderPassColorAttachment color_attachments{};
+        color_attachments.loadOp = WGPULoadOp_Load;
+        color_attachments.storeOp = WGPUStoreOp_Store;
+        color_attachments.view = surface_texture_view.value();
+        WGPURenderPassDescriptor render_pass_desc{};
         render_pass_desc.colorAttachmentCount = 1;
         render_pass_desc.colorAttachments = &color_attachments;
         render_pass_desc.depthStencilAttachment = nullptr;
+        render_pass_desc.label = "Draw ImGui Render Pass";
 
-        wgpu::CommandEncoderDescriptor enc_desc{};
+        WGPUCommandEncoderDescriptor enc_desc{};
         enc_desc.label = "Draw ImGui";
-        wgpu::CommandEncoder encoder = wgpuDeviceCreateCommandEncoder(device, &enc_desc);
+        WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(this->device, &enc_desc);
 
-        wgpu::RenderPassEncoder pass = encoder.beginRenderPass(render_pass_desc);
+        WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass_desc);
         ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), pass);
-        pass.end();
+        wgpuRenderPassEncoderEnd(pass);
 
-        wgpu::CommandBufferDescriptor cmd_buffer_desc{};
-        wgpu::CommandBuffer cmd_buffer = encoder.finish(cmd_buffer_desc);
+        WGPUCommandBufferDescriptor cmd_buffer_desc{};
+        WGPUCommandBuffer cmd_buffer = wgpuCommandEncoderFinish(encoder, &cmd_buffer_desc);
 
-        wgpuQueueSubmit(queue, 1, reinterpret_cast<const WGPUCommandBuffer*>(&cmd_buffer));
+        wgpuQueueSubmit(this->queue, 1, &cmd_buffer);
 
-        cmd_buffer.release();
-        pass.release();
-        encoder.release();
-        
-
-        // WGPURenderPassColorAttachment color_attachments{};
-        // color_attachments.loadOp = WGPULoadOp_Load;
-        // color_attachments.storeOp = WGPUStoreOp_Store;
-        // color_attachments.view = surface_texture_view.value();
-        // WGPURenderPassDescriptor render_pass_desc{};
-        // render_pass_desc.colorAttachmentCount = 1;
-        // render_pass_desc.colorAttachments = &color_attachments;
-        // render_pass_desc.depthStencilAttachment = nullptr;
-
-        // WGPUCommandEncoderDescriptor enc_desc{};
-        // enc_desc.label = "Draw ImGui";
-        // WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(this->device, &enc_desc);
-
-        // WGPURenderPassEncoder pass = wgpuCommandEncoderBeginRenderPass(encoder, &render_pass_desc);
-        // ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), pass);
-        // wgpuRenderPassEncoderEnd(pass);
-
-        // WGPUCommandBufferDescriptor cmd_buffer_desc{};
-        // WGPUCommandBuffer cmd_buffer = wgpuCommandEncoderFinish(encoder, &cmd_buffer_desc);
-        // wgpu::CommandBufferDescriptor cmd_buffer_desc{};
-        // wgpu::CommandBuffer cmd_buffer = 
-
-        // wgpuQueueSubmit(this->queue, 1, &cmd_buffer);
-
-        
+        wgpuCommandBufferRelease(cmd_buffer);
+        wgpuRenderPassEncoderRelease(pass);
+        wgpuCommandEncoderRelease(encoder);
     }
 }

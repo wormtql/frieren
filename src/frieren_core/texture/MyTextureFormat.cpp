@@ -16,7 +16,7 @@ namespace frieren_core {
 
         file.read(reinterpret_cast<char*>(&result.header), sizeof(MyTextureFormatHeader));
         // todo mipmap
-        int size = result.header.width * result.header.width * result.header.depth * result.header.pixel_bytes;
+        int size = result.header.width * result.header.height * result.header.depth * result.header.pixel_bytes;
         result.data.resize(size);
         file.read(reinterpret_cast<char*>(result.data.data()), size);
 
